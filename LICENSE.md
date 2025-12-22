@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025-present Lucas Gallagher
+Copyright (c) 2025-present
 
 Project: Multi-Agent Workflow Template
 
