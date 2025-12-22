@@ -2,11 +2,11 @@
 
 ## 1. Elevator Pitch
 
-A locally-hosted Python/Streamlit application that enables individual DevOps engineers to process web content, files, and text through a coordinator agent that orchestrates specialized tool agents. Users ask questions like "Is this URL useful for my team?" and receive polished, context-aware responses written in their personal style—ready to share with peers. The modular plugin architecture allows easy addition of new tool agents, while flexible model configuration supports local Ollama models, hosted APIs, or Azure AI Foundry.
+A locally-hosted Python/Streamlit application that enables individual end users to process web content, files, and text through a coordinator agent that orchestrates specialized tool agents. Users ask questions like "Is this URL useful for my team?" and receive polished, context-aware responses written in their personal style—ready to share with peers. The modular plugin architecture allows easy addition of new tool agents, while flexible model configuration supports local Ollama models, hosted APIs, or Azure AI Foundry.
 
 ## 2. Who Is This App For
 
-- **Primary User**: Individual DevOps engineers working on their local workstation
+- **Primary User**: Individual end users working on their local workstation
 - **Use Case**: Personal productivity tool for processing information, generating team-ready communications, and building organizational knowledge
 - **Deployment**: Local-first (single user), with potential future web hosting for individual (non-collaborative) use
 - **Technical Comfort**: Users comfortable with local model hosting (Ollama) and configuration files

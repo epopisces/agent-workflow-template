@@ -1,6 +1,6 @@
 # Multi-Agent Workflow Assistant - MVP
 
-A locally-hosted Python application that enables DevOps engineers to process web content through a coordinator agent that orchestrates specialized tool agents.
+A locally-hosted Python application that uses the Microsoft Agent Framework to provide augmented chatbot capabilities through a coordinator agent that orchestrates specialized tool agents.
 
 ## Features (MVP)
 
@@ -23,7 +23,7 @@ Download and install Ollama from [ollama.com](https://ollama.com/).
 
 ### 2. Pull a Model
 
-For systems with 8GB RAM and integrated graphics, we recommend `llama3.2:3b`:
+For systems with 8GB RAM and integrated graphics, we recommend `qwen2.5:3b` or `llama3.2:3b`:
 
 ```bash
 ollama pull llama3.2:3b

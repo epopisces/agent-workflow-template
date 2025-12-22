@@ -4,7 +4,7 @@
 Fetches and parses web content from provided URLs, extracting main text content and removing scripts, styles, and navigation elements. Designed to be used as an agent-as-tool by the Coordinator agent.
 
 ### Owner/Maintainer
-DevOps Team
+- Name: [Your Name]
 
 ### Version
 0.1.0
@@ -107,7 +107,7 @@ Title: asyncio — Asynchronous I/O
 Content:
 asyncio is a library to write concurrent code using the async/await syntax.
 asyncio is used as a foundation for multiple Python asynchronous frameworks...
-[Analysis of key points for DevOps use cases]
+[Analysis of key points for organizational use cases]
 ```
 
 #### Example 2: Content Analysis

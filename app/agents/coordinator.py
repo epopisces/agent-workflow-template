@@ -63,7 +63,7 @@ class CoordinatorAgent:
         self._agent = chat_client.create_agent(
             name=config.agents.coordinator.name,
             description=config.agents.coordinator.description,
-            instructions="""You are a helpful assistant that helps DevOps engineers process information and analyze web content.
+            instructions="""You are a helpful assistant that helps the end user process information and analyze web content.
 
 Your capabilities:
 1. **URL Analysis**: When users provide URLs, use the url_scraper tool to fetch and analyze the content. This is useful for:
@@ -80,7 +80,7 @@ How to handle requests:
 When analyzing URLs:
 - First fetch the content using the url_scraper tool
 - Then provide your analysis based on what the user asked
-- Highlight relevant information for DevOps teams
+- Highlight relevant information for the user's organization
 - Note any limitations or caveats about the content
 
 Always be helpful and provide actionable insights.""",
