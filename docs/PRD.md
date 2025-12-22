@@ -18,6 +18,7 @@ A locally-hosted Python/Streamlit application that enables individual DevOps eng
 - **Plugin-Based Tool Agents**: Modular agents in separate folders, registered via a tool registration pattern (agent-as-tool workflow per Microsoft Agent Framework)
   - **Third-party Integration**: Future support for integrating external APIs as tools
 - **Flexible Model Backend**: Configuration-driven model selection supporting Ollama (local), hosted APIs, and Azure AI Foundry
+- **Context & Environment State**: Maintains conversation history, organizational knowledge, and user style examples for context-aware responses
 
 ### Initial Tool Agents
 

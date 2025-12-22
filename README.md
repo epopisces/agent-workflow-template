@@ -37,7 +37,7 @@ Other lightweight options:
 
 ```bash
 # Create virtual environment
-uv venv python=3.12.8
+uv venv --python=3.13.11
 
 # Activate (Windows)
 .venv\Scripts\activate
