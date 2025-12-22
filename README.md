@@ -1,6 +1,8 @@
 # Multi-Agent Workflow Assistant - MVP
 
-A locally-hosted Python application that uses the Microsoft Agent Framework to provide augmented chatbot capabilities through a coordinator agent that orchestrates specialized tool agents.
+Use this template as a springboard for building a multi-agent workflow application using the Microsoft Agent Framework.  Out of the box this is a locally-hosted Python application that uses the Microsoft Agent Framework to provide augmented chatbot capabilities through a coordinator agent that orchestrates specialized tool agents.
+
+It is currently in a Minimum Viable Product (MVP) state, and additional features will be added presently.
 
 ## Features (MVP)
 
