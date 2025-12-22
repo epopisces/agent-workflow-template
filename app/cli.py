@@ -24,7 +24,7 @@ def print_welcome():
     print("\nCommands:")
     print("  /new     - Start a new conversation")
     print("  /config  - Show current configuration")
-    print("  /debug   - Toggle DEBUG logging (see agent handoffs)")
+    print("  /loglevel <level> - Set logging level (e.g., /loglevel debug)")
     print("  /quit    - Exit the application")
     print("  /help    - Show this help message")
     print("\nTip: Paste a URL to analyze its content!")
@@ -43,21 +43,18 @@ def print_config():
     print("-" * 20 + "\n")
 
 
-def toggle_debug():
-    """Toggle between DEBUG and INFO logging levels."""
+def set_log_level(level_name: str):
+    """Set logging level dynamically."""
     root_logger = logging.getLogger(LOGGER_ROOT)
-    if root_logger.level == logging.DEBUG:
-        root_logger.setLevel(logging.INFO)
-        for handler in root_logger.handlers:
-            handler.setLevel(logging.INFO)
-        print("\n--- Logging set to INFO ---\n")
-        logger.info("Logging level changed to INFO")
-    else:
-        root_logger.setLevel(logging.DEBUG)
-        for handler in root_logger.handlers:
-            handler.setLevel(logging.DEBUG)
-        print("\n--- Logging set to DEBUG (agent handoffs visible) ---\n")
-        logger.info("Logging level changed to DEBUG")
+    level = getattr(logging, level_name.upper(), None)
+    if not isinstance(level, int):
+        print(f"\nInvalid log level: {level_name}\n")
+        return
+    root_logger.setLevel(level)
+    for handler in root_logger.handlers:
+        handler.setLevel(level)
+    print(f"\n--- Logging set to {logging.getLevelName(level)} ---\n")
+    logger.info(f"Logging level changed to {logging.getLevelName(level)}")
 
 
 async def chat_loop(coordinator: CoordinatorAgent):
@@ -79,7 +76,7 @@ async def chat_loop(coordinator: CoordinatorAgent):
             # Handle commands
             if user_input.startswith("/"):
                 command = user_input.lower()
-                
+
                 if command == "/quit" or command == "/exit":
                     logger.info("User requested exit")
                     print("\nGoodbye!")
@@ -91,8 +88,9 @@ async def chat_loop(coordinator: CoordinatorAgent):
                 elif command == "/config":
                     print_config()
                     continue
-                elif command == "/debug":
-                    toggle_debug()
+                elif command.startswith("/loglevel "):
+                    level_name = command.split(" ", 1)[-1].strip()
+                    set_log_level(level_name)
                     continue
                 elif command == "/help":
                     print_welcome()

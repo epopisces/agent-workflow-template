@@ -90,6 +90,7 @@ Once running, you can:
 3. **Commands**:
    - `/new` - Start a new conversation
    - `/config` - Show current configuration
+   - `/loglevel [level]` - Set logging level (DEBUG, INFO, WARNING, ERROR)
    - `/help` - Show help message
    - `/quit` - Exit the application
 
