@@ -1,0 +1,39 @@
+[project]
+name = "multi-agent-workflow"
+version = "0.1.0"
+description = "Multi-Agent Workflow Assistant - MVP with Coordinator and URL Scraper"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "agent-framework-ollama>=0.0.1a1",
+    "httpx>=0.27.0",
+    "beautifulsoup4>=4.12.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-mock>=3.14.0",
+    "respx>=0.21.0",
+]
+
+[project.scripts]
+workflow = "app.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
