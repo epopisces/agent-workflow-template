@@ -12,6 +12,7 @@ from agent_framework.ollama import OllamaChatClient
 
 from app.config import get_config
 from app.agents.tools.url_scraper import URLScraperAgent
+from app.agents.tools.knowledge_ingestion import KnowledgeIngestionAgent
 
 # Logger for coordinator agent
 logger = logging.getLogger("workflow.coordinator")
@@ -28,12 +29,14 @@ class CoordinatorAgent:
         self,
         chat_client: OllamaChatClient | None = None,
         url_scraper: URLScraperAgent | None = None,
+        knowledge_ingestion: KnowledgeIngestionAgent | None = None,
     ):
         """Initialize the Coordinator Agent.
         
         Args:
             chat_client: Optional OllamaChatClient for the coordinator.
             url_scraper: Optional URLScraperAgent. Created if not provided.
+            knowledge_ingestion: Optional KnowledgeIngestionAgent. Created if not provided.
         """
         config = get_config()
         logger.info("Initializing Coordinator Agent")
@@ -59,11 +62,23 @@ class CoordinatorAgent:
         self._url_scraper = url_scraper
         logger.debug("URLScraperAgent registered as tool")
         
+        # Create Knowledge Ingestion agent if not provided
+        if knowledge_ingestion is None:
+            logger.debug("Creating KnowledgeIngestionAgent as tool")
+            knowledge_client = OllamaChatClient(
+                host=config.models.ollama.host,
+                model_id=config.models.ollama.model_id,
+            )
+            knowledge_ingestion = KnowledgeIngestionAgent(chat_client=knowledge_client)
+        
+        self._knowledge_ingestion = knowledge_ingestion
+        logger.debug("KnowledgeIngestionAgent registered as tool")
+        
         # Create the coordinator agent with tool agents as tools
         self._agent = chat_client.create_agent(
             name=config.agents.coordinator.name,
             description=config.agents.coordinator.description,
-            instructions="""You are a helpful assistant that helps the end user process information and analyze web content.
+            instructions="""You are a helpful assistant that helps the end user process information, analyze web content, and manage organizational knowledge.
 
 Your capabilities:
 1. **URL Analysis**: When users provide URLs, use the url_scraper tool to fetch and analyze the content. This is useful for:
@@ -71,20 +86,28 @@ Your capabilities:
    - Summarizing technical documentation
    - Extracting key points from articles or blog posts
 
+2. **Knowledge Management**: When users share information about their organization, projects, processes, or want to save useful content, use the knowledge_ingestion tool. This is useful for:
+   - Storing organizational context (team structure, processes, technologies used)
+   - Saving URLs with metadata for future reference
+   - Creating notes from meetings, research, or documentation
+   - Building up organizational knowledge over time
+
 How to handle requests:
 - If a user provides a URL or asks about web content, use the url_scraper tool
+- If a user shares organizational information, context, or wants to save/remember something, use the knowledge_ingestion tool
 - After getting results from tools, synthesize the information into a helpful response
 - Be concise but thorough in your responses
 - If you encounter errors, explain them clearly and suggest alternatives
 
-When analyzing URLs:
-- First fetch the content using the url_scraper tool
-- Then provide your analysis based on what the user asked
-- Highlight relevant information for the user's organization
-- Note any limitations or caveats about the content
+When to use knowledge_ingestion:
+- User shares information about their organization, team, or environment
+- User describes their tech stack, processes, or workflows
+- User wants to save a URL or web content for future reference
+- User provides context they want the system to remember
+- User shares meeting notes, decisions, or documentation
 
-Always be helpful and provide actionable insights.""",
-            tools=[url_scraper.as_tool()],
+Always be helpful and provide actionable insights. When storing knowledge, confirm what was saved.""",
+            tools=[url_scraper.as_tool(), knowledge_ingestion.as_tool()],
         )
         
         # Thread for conversation context
