@@ -45,6 +45,12 @@ class AgentsConfig(BaseModel):
             description="Fetches and parses web content from URLs"
         )
     )
+    knowledge_ingestion: AgentConfig = Field(
+        default_factory=lambda: AgentConfig(
+            name="KnowledgeIngestion",
+            description="Processes and stores content into organizational knowledge stores"
+        )
+    )
 
 
 class ScraperConfig(BaseModel):
@@ -52,6 +58,56 @@ class ScraperConfig(BaseModel):
     timeout: int = Field(default=30)
     user_agent: str = Field(default="MultiAgentWorkflow/0.1")
     max_content_length: int = Field(default=50000)
+
+
+class NoteTopicConfig(BaseModel):
+    """Configuration for a single notes topic."""
+    directory: str = Field(description="Directory path for notes in this topic")
+    template: str = Field(description="Path to the template file for this topic")
+    description: str = Field(default="", description="Description of this topic")
+    frontmatter_defaults: dict[str, str | int | bool] = Field(
+        default_factory=dict,
+        description="Default frontmatter values for notes in this topic"
+    )
+
+
+class KnowledgeConfig(BaseModel):
+    """Knowledge ingestion configuration."""
+    confidence_threshold: float = Field(
+        default=0.7,
+        ge=0.0,
+        le=1.0,
+        description="Confidence threshold below which human review is required"
+    )
+    relevance_threshold: float = Field(
+        default=0.6,
+        ge=0.0,
+        le=1.0,
+        description="Relevance threshold below which human review is required"
+    )
+    instructions_file: str = Field(
+        default="knowledge/instructions.md",
+        description="Path to the instructions file with org context"
+    )
+    url_index_file: str = Field(
+        default="knowledge/url_index.yaml",
+        description="Path to the URL index file"
+    )
+    notes_topics: dict[str, NoteTopicConfig] = Field(
+        default_factory=lambda: {
+            "default": NoteTopicConfig(
+                directory="notes",
+                template="config/templates/note_template.md",
+                description="General notes and documentation",
+                frontmatter_defaults={
+                    "category": "general",
+                    "priority": "medium",
+                    "reviewed": False
+                }
+            )
+        },
+        description="Notes configuration by topic"
+    )
 
 
 class LoggingConfig(BaseModel):
@@ -65,6 +121,7 @@ class AppConfig(BaseModel):
     models: ModelsConfig = Field(default_factory=ModelsConfig)
     agents: AgentsConfig = Field(default_factory=AgentsConfig)
     scraper: ScraperConfig = Field(default_factory=ScraperConfig)
+    knowledge: KnowledgeConfig = Field(default_factory=KnowledgeConfig)
     logging: LoggingConfig = Field(default_factory=LoggingConfig)
 
 

@@ -31,8 +31,9 @@ A locally-hosted Python/Streamlit application that enables individual end users 
 
 ### Knowledge Sources
 - **Instructions File**: Local file with high-level org context summaries
-- **Org URL Index**: Indexed org-owned URLs with metadata (domain, context, content summary)
-- **User Notes Index**: Local markdown files with frontmatter (user-generated notes)
+- **Org URL Index**: Index of org-relevant URLs with metadata (domain of knowledge, context, content summary)
+- **User Notes Files**: Local markdown files with frontmatter (both agent and user-generated)
+  - **User Notes Index**: Index of Local markdown files with metadata (domain of knowledge, context, content summary)
 - **Style Examples**: 1-to-1 input/output pairs (source URLs/chats → user-written documentation)
 - **Future**: Vector database for mature RAG implementation
 
@@ -51,7 +52,7 @@ A locally-hosted Python/Streamlit application that enables individual end users 
 ## 4. User Stories
 
 ### Information Processing
-> *As a user, I want to paste a URL and ask "Is there anything useful here for my DevOps team?" so that I can quickly assess and share relevant content.*
+> *As a user, I want to include a URL in a chat and ask questions related to it such as "Is there anything useful here for my team?" so that I can quickly assess and share relevant content.*
 
 ### Knowledge Building
 > *As a user, I want to ingest a new document into my org knowledge base so that future queries can reference it.*

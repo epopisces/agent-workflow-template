@@ -32,3 +32,32 @@ scraper:
   user_agent: "MultiAgentWorkflow/0.1 (Educational/Personal Use)"
   # Maximum content length to process (in characters)
   max_content_length: 50000
+
+# Knowledge Ingestion Agent configuration
+knowledge:
+  # Confidence threshold for human review (0.0 - 1.0)
+  # Content with confidence below this requires human approval before storing
+  confidence_threshold: 0.7
+  
+  # Relevance threshold for human review (0.0 - 1.0)
+  # Content with relevance below this requires human approval before storing
+  relevance_threshold: 0.6
+  
+  # Instructions file path (high-level org context summaries)
+  instructions_file: "knowledge/instructions.md"
+  
+  # Org URL index file path (index of org-relevant URLs with metadata)
+  url_index_file: "knowledge/url_index.yaml"
+  
+  # User notes configuration by topic
+  # Each topic has: directory, template file, and description
+  notes_topics:
+    default:
+      directory: "notes"
+      template: "config/templates/note_template.md"
+      description: "General notes and documentation"
+      # Frontmatter defaults for this topic
+      frontmatter_defaults:
+        category: "general"
+        priority: "medium"
+        reviewed: false

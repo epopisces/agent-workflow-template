@@ -1,4 +1,5 @@
 # Multi-Agent Workflow Assistant - MVP
+---
 
 Use this template as a springboard for building a multi-agent workflow application using the Microsoft Agent Framework.  Out of the box this is a locally-hosted Python application that uses the Microsoft Agent Framework to provide augmented chatbot capabilities through a coordinator agent that orchestrates specialized tool agents.
 
@@ -100,3 +101,8 @@ Once running, you can:
 
 ```
 You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ for my DevOps team?
+```
+
+# Customizing the Template
+
+---
