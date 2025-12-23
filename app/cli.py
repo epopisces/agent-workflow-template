@@ -106,7 +106,7 @@ async def chat_loop(coordinator: CoordinatorAgent):
             try:
                 async for chunk in coordinator.run_stream(user_input):
                     print(chunk, end="", flush=True)
-                print("\n")
+                print()  # Blank line for spacing after response
             except Exception as e:
                 logger.error(f"Error during agent execution: {e}", exc_info=True)
                 print(f"\n\nError: {e}")

@@ -151,8 +151,12 @@ Always be helpful and provide actionable insights. When storing knowledge, confi
         logger.info(f"Processing query (streaming): {query[:100]}{'...' if len(query) > 100 else ''}")
         logger.debug("Invoking coordinator agent with streaming")
         chunk_count = 0
-        async for chunk in self._agent.run_stream(query, thread=self._thread):
-            if chunk.text:
-                chunk_count += 1
-                yield chunk.text
-        logger.debug(f"Stream completed: {chunk_count} chunks")
+        try:
+            async for chunk in self._agent.run_stream(query, thread=self._thread):
+                if chunk.text:
+                    chunk_count += 1
+                    yield chunk.text
+        finally:
+            # Print newline before debug log to avoid appending to stream output
+            print()
+            logger.debug(f"Stream completed: {chunk_count} chunks")
