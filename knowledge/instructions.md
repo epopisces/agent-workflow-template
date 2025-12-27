@@ -1,6 +1,6 @@
 # Organizational Instructions
 
-Last Updated: 2024-12-22
+Last Updated: 2025-12-22
 
 This file contains high-level organizational context summaries for agent reference.
 
