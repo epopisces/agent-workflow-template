@@ -108,10 +108,22 @@ async def chat_loop(coordinator: CoordinatorAgent):
                     print(chunk, end="", flush=True)
                 print()  # Blank line for spacing after response
             except Exception as e:
-                logger.error(f"Error during agent execution: {e}", exc_info=True)
-                print(f"\n\nError: {e}")
-                print("Make sure Ollama is running and the model is available.")
-                print(f"Try: ollama pull {get_config().models.ollama.model_id}\n")
+                # Check for common Ollama JSON escaping errors with small models
+                error_msg = str(e)
+                if "invalid character" in error_msg and "escape code" in error_msg:
+                    logger.error(f"Tool call JSON error: {e}", exc_info=True)
+                    print(f"\n\nError: The model generated malformed JSON for a tool call.")
+                    print("This is common with smaller models when handling complex content.")
+                    print("\nSuggestions:")
+                    print("  1. Try a more capable model: ollama pull qwen2.5:7b")
+                    print("  2. Update config.yaml: model_id: \"qwen2.5:7b\"")
+                    print("  3. Or try: llama3.2:3b, mistral:7b, or qwen2.5:3b")
+                    print("\nYou can also try rephrasing your request more simply.\n")
+                else:
+                    logger.error(f"Error during agent execution: {e}", exc_info=True)
+                    print(f"\n\nError: {e}")
+                    print("Make sure Ollama is running and the model is available.")
+                    print(f"Try: ollama pull {get_config().models.ollama.model_id}\n")
                 
         except KeyboardInterrupt:
             print("\n\nInterrupted. Type /quit to exit.\n")

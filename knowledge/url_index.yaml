@@ -2,21 +2,24 @@
 
 # This file is managed by the Knowledge Ingestion Agent.
 # It contains org-relevant URLs with metadata for agent reference.
-
 urls:
-  - url: "https://github.com/epopisces/agent-workflow-template"
-    title: "Agent Workflow Template Repository"
-    domain: "engineering"
-    context: "Source repository for this multi-agent workflow application. Contains architecture patterns, agent implementations, and configuration templates."
-    summary: "A locally-hosted Python application enabling users to process web content, files, and text through a coordinator agent that orchestrates specialized tool agents. Features modular plugin architecture, flexible model configuration (Ollama, hosted APIs, Azure AI Foundry), and knowledge management capabilities."
-    tags:
-      - python
-      - agents
-      - ollama
-      - multi-agent
-      - agent-workflow
-      - template
-    added_date: "2024-12-22T00:00:00"
-    confidence: 1.0
-    relevance: 1.0
+- url: https://github.com/epopisces/agent-workflow-template
+  title: Agent Workflow Template Repository
+  domain: engineering
+  context: Source repository for this multi-agent workflow application. Contains architecture
+    patterns, agent implementations, and configuration templates.
+  summary: A locally-hosted Python application enabling users to process web content,
+    files, and text through a coordinator agent that orchestrates specialized tool
+    agents. Features modular plugin architecture, flexible model configuration (Ollama,
+    hosted APIs, Azure AI Foundry), and knowledge management capabilities.
+  tags:
+  - python
+  - agents
+  - ollama
+  - multi-agent
+  - agent-workflow
+  - template
+  added_date: '2024-12-22T00:00:00'
+  confidence: 1.0
+  relevance: 1.0
 
