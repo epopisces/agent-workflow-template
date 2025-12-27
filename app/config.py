@@ -51,6 +51,12 @@ class AgentsConfig(BaseModel):
             description="Processes and stores content into organizational knowledge stores"
         )
     )
+    org_context: AgentConfig = Field(
+        default_factory=lambda: AgentConfig(
+            name="OrgContext",
+            description="Retrieves organizational context from knowledge stores"
+        )
+    )
 
 
 class ScraperConfig(BaseModel):

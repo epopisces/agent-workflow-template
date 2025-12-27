@@ -13,6 +13,7 @@ from agent_framework.ollama import OllamaChatClient
 from app.config import get_config
 from app.agents.tools.url_scraper import URLScraperAgent
 from app.agents.tools.knowledge_ingestion import KnowledgeIngestionAgent
+from app.agents.tools.org_context import OrgContextAgent
 
 # Logger for coordinator agent
 logger = logging.getLogger("workflow.coordinator")
@@ -30,6 +31,7 @@ class CoordinatorAgent:
         chat_client: OllamaChatClient | None = None,
         url_scraper: URLScraperAgent | None = None,
         knowledge_ingestion: KnowledgeIngestionAgent | None = None,
+        org_context: OrgContextAgent | None = None,
     ):
         """Initialize the Coordinator Agent.
         
@@ -37,6 +39,7 @@ class CoordinatorAgent:
             chat_client: Optional OllamaChatClient for the coordinator.
             url_scraper: Optional URLScraperAgent. Created if not provided.
             knowledge_ingestion: Optional KnowledgeIngestionAgent. Created if not provided.
+            org_context: Optional OrgContextAgent. Created if not provided.
         """
         config = get_config()
         logger.info("Initializing Coordinator Agent")
@@ -74,6 +77,22 @@ class CoordinatorAgent:
         self._knowledge_ingestion = knowledge_ingestion
         logger.debug("KnowledgeIngestionAgent registered as tool")
         
+        # Create Org Context agent if not provided
+        if org_context is None:
+            logger.debug("Creating OrgContextAgent as tool")
+            org_context_client = OllamaChatClient(
+                host=config.models.ollama.host,
+                model_id=config.models.ollama.model_id,
+            )
+            # Pass URL scraper tool so org_context can fetch indexed URLs as last resort
+            org_context = OrgContextAgent(
+                chat_client=org_context_client,
+                url_scraper_tool=url_scraper.as_tool(),
+            )
+        
+        self._org_context = org_context
+        logger.debug("OrgContextAgent registered as tool")
+        
         # Create the coordinator agent with tool agents as tools
         self._agent = chat_client.create_agent(
             name=config.agents.coordinator.name,
@@ -92,12 +111,24 @@ Your capabilities:
    - Creating notes from meetings, research, or documentation
    - Building up organizational knowledge over time
 
+3. **Organizational Context**: When users ask questions that might benefit from organizational context, use the org_context tool. This retrieves:
+   - High-level org context from the instructions file
+   - Detailed documentation from notes
+   - Information from indexed URLs (as last resort)
+
 How to handle requests:
 - If a user provides a URL or asks about web content, use the url_scraper tool
 - If a user shares organizational information, context, or wants to save/remember something, use the knowledge_ingestion tool
+- If a user asks questions that might need organizational context (about processes, team, tools, etc.), use the org_context tool FIRST
 - After getting results from tools, synthesize the information into a helpful response
 - Be concise but thorough in your responses
 - If you encounter errors, explain them clearly and suggest alternatives
+
+When to use org_context:
+- User asks about organizational processes, team structure, or workflows
+- User asks questions that might be answered by previously stored knowledge
+- User asks about tools, technologies, or practices used in the organization
+- User references something that might be documented
 
 When to use knowledge_ingestion:
 - User shares information about their organization, team, or environment
@@ -115,7 +146,7 @@ Example: If user says "I'm a DevOps engineer who uses Python and Terraform", cal
 "The user shared their role and tools. UPDATE THE INSTRUCTIONS FILE with: DevOps Engineer, uses Python and Terraform..."
 
 Always be helpful and provide actionable insights. When storing knowledge, confirm what was saved.""",
-            tools=[url_scraper.as_tool(), knowledge_ingestion.as_tool()],
+            tools=[url_scraper.as_tool(), knowledge_ingestion.as_tool(), org_context.as_tool()],
         )
         
         # Thread for conversation context

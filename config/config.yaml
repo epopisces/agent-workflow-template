@@ -26,6 +26,14 @@ agents:
   url_scraper:
     name: "URLScraper"
     description: "Fetches and parses web content from provided URLs"
+  
+  knowledge_ingestion:
+    name: "KnowledgeIngestion"
+    description: "Processes and stores content into organizational knowledge stores"
+  
+  org_context:
+    name: "OrgContext"
+    description: "Retrieves organizational context from knowledge stores (instructions, notes, URLs)"
 
 scraper:
   # Request timeout in seconds
