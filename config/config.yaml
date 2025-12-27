@@ -70,8 +70,6 @@ metrics:
   enabled: true
   # Directory to store metrics files
   directory: "metrics"
-  # Save metrics after each operation (vs. only on session end)
-  persist_on_operation: false
 
 # Progress indicator configuration
 progress:

@@ -557,16 +557,28 @@ When given content to ingest, analyze it and decide:
    - Summarize the key points
 
 2. **High-Level Context** → Use `update_instructions_file` for:
+   - **User/role context**: Who they are, their role, primary focus areas
+   - **Working style and preferences**: How they work, tools they use, workflows
    - Team structures and responsibilities
    - Key processes and workflows
    - Organizational policies
    - Strategic information
+   - Technology stack and tool preferences
+   
+   **IMPORTANT**: When users share information about themselves (their role, skills, 
+   tools, working style), this is HIGH-VALUE organizational context that MUST go 
+   in the instructions file. This helps all agents understand who they're working with.
 
 3. **Detailed Documentation** → Use `create_note` for:
-   - Technical documentation
+   - Technical documentation from external sources
    - Meeting notes
-   - Project details
+   - Project-specific details
    - Research findings
+   - Content extracted from URLs
+
+**CRITICAL**: If content describes the user's role, skills, tools, or workflow preferences,
+ALWAYS use `update_instructions_file` first, then optionally create a note for detailed records.
+The instructions file is the primary reference for agents to understand organizational context.
 
 ## Confidence and Relevance Scoring
 
@@ -617,9 +629,9 @@ Always use the get_knowledge_status tool first to understand the current state o
     def as_tool(
         self,
         name: str = "knowledge_ingestion",
-        description: str = "Process and store content in organizational knowledge stores (URL index, instructions file, or notes). Use this tool when you need to save information for future reference.",
+        description: str = "Process and store content in organizational knowledge stores. Use this tool when users share context about themselves, their role, their workflow, tools they use, or organizational information. User/role context goes to the INSTRUCTIONS FILE. Detailed documentation goes to NOTES.",
         arg_name: str = "request",
-        arg_description: str = "A request describing what content to ingest and optionally the target store (url_index, instructions, or notes)."
+        arg_description: str = "A request describing what content to ingest. For user context (role, skills, tools, workflow), specify 'update instructions file'. For detailed docs, specify 'create note'."
     ):
         """Convert this agent to a tool that can be used by other agents.
         

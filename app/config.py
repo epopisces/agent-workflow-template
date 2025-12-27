@@ -114,10 +114,6 @@ class MetricsConfig(BaseModel):
     """Metrics collection configuration."""
     enabled: bool = Field(default=True, description="Enable/disable metrics collection")
     directory: str = Field(default="metrics", description="Directory to store metrics files")
-    persist_on_operation: bool = Field(
-        default=False,
-        description="Save metrics after each operation vs. only on session end"
-    )
 
 
 class ProgressConfig(BaseModel):

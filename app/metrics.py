@@ -91,18 +91,15 @@ class MetricsCollector:
         self,
         metrics_dir: Path | str | None = None,
         enabled: bool = True,
-        persist_on_operation: bool = False,  # Save after each operation vs. on shutdown
     ):
         """Initialize the metrics collector.
         
         Args:
             metrics_dir: Directory to store metrics files.
             enabled: Whether metrics collection is enabled.
-            persist_on_operation: Save metrics after each operation.
         """
         self._metrics_dir = Path(metrics_dir) if metrics_dir else DEFAULT_METRICS_DIR
         self._enabled = enabled
-        self._persist_on_operation = persist_on_operation
         
         # Current session
         self._session = SessionMetrics(
@@ -185,8 +182,8 @@ class MetricsCollector:
             f"{duration_seconds:.2f}s, success={success}"
         )
         
-        if self._persist_on_operation:
-            self._append_metric(metric)
+        # Always append to daily log for durability (efficient append operation)
+        self._append_metric(metric)
             
         return metric
     
@@ -355,14 +352,12 @@ def get_metrics_collector() -> MetricsCollector:
 def configure_metrics(
     metrics_dir: Path | str | None = None,
     enabled: bool = True,
-    persist_on_operation: bool = False,
 ) -> MetricsCollector:
     """Configure and get the global metrics collector.
     
     Args:
         metrics_dir: Directory to store metrics files.
         enabled: Whether metrics collection is enabled.
-        persist_on_operation: Save metrics after each operation.
         
     Returns:
         Configured MetricsCollector instance.
@@ -371,6 +366,5 @@ def configure_metrics(
     _metrics_collector = MetricsCollector(
         metrics_dir=metrics_dir,
         enabled=enabled,
-        persist_on_operation=persist_on_operation,
     )
     return _metrics_collector

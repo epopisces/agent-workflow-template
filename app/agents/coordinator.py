@@ -106,6 +106,14 @@ When to use knowledge_ingestion:
 - User provides context they want the system to remember
 - User shares meeting notes, decisions, or documentation
 
+**CRITICAL for knowledge_ingestion**:
+When calling knowledge_ingestion, you MUST include guidance in your request:
+- For user context (their role, skills, tools, workflow, preferences) → tell it to "update the instructions file"
+- For detailed documentation, meeting notes, research → tell it to "create a note"
+
+Example: If user says "I'm a DevOps engineer who uses Python and Terraform", call knowledge_ingestion with:
+"The user shared their role and tools. UPDATE THE INSTRUCTIONS FILE with: DevOps Engineer, uses Python and Terraform..."
+
 Always be helpful and provide actionable insights. When storing knowledge, confirm what was saved.""",
             tools=[url_scraper.as_tool(), knowledge_ingestion.as_tool()],
         )

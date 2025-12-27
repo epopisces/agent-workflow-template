@@ -161,7 +161,7 @@ async def chat_loop(coordinator: CoordinatorAgent):
                 
                 print()  # Blank line for spacing after response
                 
-                # Record metrics
+                # Record metrics (automatically appends to daily log)
                 duration = time.time() - start_time
                 metrics_collector.record(
                     operation="query",
@@ -179,7 +179,7 @@ async def chat_loop(coordinator: CoordinatorAgent):
                 if progress_tracker:
                     await progress_tracker.stop()
                 
-                # Record failed metric
+                # Record failed metric (automatically appends to daily log)
                 duration = time.time() - start_time if 'start_time' in dir() else 0
                 metrics_collector.record(
                     operation="query",
@@ -231,7 +231,6 @@ async def async_main():
     configure_metrics(
         metrics_dir=config.metrics.directory,
         enabled=config.metrics.enabled,
-        persist_on_operation=config.metrics.persist_on_operation,
     )
     if config.metrics.enabled:
         logger.info(f"Metrics collection enabled: {config.metrics.directory}")
