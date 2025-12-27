@@ -63,3 +63,25 @@ knowledge:
         category: "general"
         priority: "medium"
         reviewed: false
+
+# Metrics collection configuration
+metrics:
+  # Enable/disable metrics collection
+  enabled: true
+  # Directory to store metrics files
+  directory: "metrics"
+  # Save metrics after each operation (vs. only on session end)
+  persist_on_operation: false
+
+# Progress indicator configuration
+progress:
+  # Enable progress indicators during long operations
+  enabled: true
+  # Style: spinner, dots, elapsed, message
+  style: "dots"
+  # Seconds between progress updates
+  update_interval: 2.0
+  # Show elapsed time in progress indicator
+  show_elapsed: true
+  # For streaming: seconds of idle before showing "still working" message
+  streaming_idle_threshold: 5.0

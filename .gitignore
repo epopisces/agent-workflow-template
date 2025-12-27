@@ -76,7 +76,13 @@ dmypy.json
 cython_debug/
 
 # VS Code settings
-.vscode/
+!.vscode/
+.vscode/*
+
+# launch.json intentionally left for developers to customize debugging
+!.vscode/launch.json 
+
+*.code-workspace
 
 # Mac OS
 .DS_Store
@@ -94,3 +100,6 @@ Desktop.ini
 
 # Logs
 *.log
+# Metrics data (contains session-specific data)
+metrics/
+!metrics/.gitkeep

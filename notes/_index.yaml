@@ -1,8 +1,20 @@
-# Notes Index
-
-# This file is managed by the Knowledge Ingestion Agent.
-# It indexes all notes in this topic directory.
-
 topic: default
 description: General notes and documentation
-notes: []
+notes:
+- filename: 20251227-agent-workflow-template-github-repository-summary.md
+  title: agent-workflow-template - GitHub Repository Summary
+  domain: engineering
+  category: notes
+  summary: A GitHub repository offering a template for a locally-hosted multi-agent
+    workflow application designed for DevOps and IT professionals.
+  tags:
+  - devops
+  - ai
+  - automation
+  - python
+  - github
+  - ollama
+  created: '2025-12-27'
+  updated: '2025-12-27'
+  confidence: 0.95
+  relevance: 0.95

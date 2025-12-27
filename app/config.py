@@ -110,6 +110,28 @@ class KnowledgeConfig(BaseModel):
     )
 
 
+class MetricsConfig(BaseModel):
+    """Metrics collection configuration."""
+    enabled: bool = Field(default=True, description="Enable/disable metrics collection")
+    directory: str = Field(default="metrics", description="Directory to store metrics files")
+    persist_on_operation: bool = Field(
+        default=False,
+        description="Save metrics after each operation vs. only on session end"
+    )
+
+
+class ProgressConfig(BaseModel):
+    """Progress indicator configuration."""
+    enabled: bool = Field(default=True, description="Enable progress indicators")
+    style: str = Field(default="dots", description="Style: spinner, dots, elapsed, message")
+    update_interval: float = Field(default=2.0, description="Seconds between updates")
+    show_elapsed: bool = Field(default=True, description="Show elapsed time")
+    streaming_idle_threshold: float = Field(
+        default=5.0,
+        description="Seconds of idle before showing 'still working' in streaming mode"
+    )
+
+
 class LoggingConfig(BaseModel):
     """Logging configuration."""
     level: str = Field(default="INFO")
@@ -123,6 +145,8 @@ class AppConfig(BaseModel):
     scraper: ScraperConfig = Field(default_factory=ScraperConfig)
     knowledge: KnowledgeConfig = Field(default_factory=KnowledgeConfig)
     logging: LoggingConfig = Field(default_factory=LoggingConfig)
+    metrics: MetricsConfig = Field(default_factory=MetricsConfig)
+    progress: ProgressConfig = Field(default_factory=ProgressConfig)
 
 
 def load_config(config_path: str | Path | None = None) -> AppConfig:
