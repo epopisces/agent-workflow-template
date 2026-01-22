@@ -10,13 +10,23 @@ import logging
 from agent_framework import ChatAgent
 from agent_framework.ollama import OllamaChatClient
 
-from app.config import get_config
+from app.config import get_config, load_instructions
 from app.agents.tools.url_scraper import URLScraperAgent
 from app.agents.tools.knowledge_ingestion import KnowledgeIngestionAgent
 from app.agents.tools.org_context import OrgContextAgent
 
 # Logger for coordinator agent
 logger = logging.getLogger("workflow.coordinator")
+
+# Fallback instructions if file not found
+_FALLBACK_INSTRUCTIONS = """You are a helpful assistant that helps the end user process information, analyze web content, and manage organizational knowledge.
+
+Use the available tools proactively:
+- url_scraper: Fetch and analyze web content
+- knowledge_ingestion: Store information in the knowledge base
+- org_context: Retrieve organizational context from stored knowledge
+
+Be helpful and actionable in your responses."""
 
 
 class CoordinatorAgent:
@@ -93,59 +103,17 @@ class CoordinatorAgent:
         self._org_context = org_context
         logger.debug("OrgContextAgent registered as tool")
         
+        # Load instructions from file or use fallback
+        instructions = load_instructions(config.agents.coordinator.instructions_file)
+        if instructions is None:
+            logger.warning("Using fallback instructions for coordinator")
+            instructions = _FALLBACK_INSTRUCTIONS
+        
         # Create the coordinator agent with tool agents as tools
         self._agent = chat_client.create_agent(
             name=config.agents.coordinator.name,
             description=config.agents.coordinator.description,
-            instructions="""You are a helpful assistant that helps the end user process information, analyze web content, and manage organizational knowledge.
-
-Your capabilities:
-1. **URL Analysis**: When users provide URLs, use the url_scraper tool to fetch and analyze the content. This is useful for:
-   - Evaluating if a webpage contains useful information for a team
-   - Summarizing technical documentation
-   - Extracting key points from articles or blog posts
-
-2. **Knowledge Management**: When users share information about their organization, projects, processes, or want to save useful content, use the knowledge_ingestion tool. This is useful for:
-   - Storing organizational context (team structure, processes, technologies used)
-   - Saving URLs with metadata for future reference
-   - Creating notes from meetings, research, or documentation
-   - Building up organizational knowledge over time
-
-3. **Organizational Context**: When users ask questions that might benefit from organizational context, use the org_context tool. This retrieves:
-   - High-level org context from the instructions file
-   - Detailed documentation from notes
-   - Information from indexed URLs (as last resort)
-
-How to handle requests:
-- If a user provides a URL or asks about web content, use the url_scraper tool
-- If a user shares organizational information, context, or wants to save/remember something, use the knowledge_ingestion tool
-- If a user asks questions that might need organizational context (about processes, team, tools, etc.), use the org_context tool FIRST
-- After getting results from tools, synthesize the information into a helpful response
-- Be concise but thorough in your responses
-- If you encounter errors, explain them clearly and suggest alternatives
-
-When to use org_context:
-- User asks about organizational processes, team structure, or workflows
-- User asks questions that might be answered by previously stored knowledge
-- User asks about tools, technologies, or practices used in the organization
-- User references something that might be documented
-
-When to use knowledge_ingestion:
-- User shares information about their organization, team, or environment
-- User describes their tech stack, processes, or workflows
-- User wants to save a URL or web content for future reference
-- User provides context they want the system to remember
-- User shares meeting notes, decisions, or documentation
-
-**CRITICAL for knowledge_ingestion**:
-When calling knowledge_ingestion, you MUST include guidance in your request:
-- For user context (their role, skills, tools, workflow, preferences) → tell it to "update the instructions file"
-- For detailed documentation, meeting notes, research → tell it to "create a note"
-
-Example: If user says "I'm a DevOps engineer who uses Python and Terraform", call knowledge_ingestion with:
-"The user shared their role and tools. UPDATE THE INSTRUCTIONS FILE with: DevOps Engineer, uses Python and Terraform..."
-
-Always be helpful and provide actionable insights. When storing knowledge, confirm what was saved.""",
+            instructions=instructions,
             tools=[url_scraper.as_tool(), knowledge_ingestion.as_tool(), org_context.as_tool()],
         )
         

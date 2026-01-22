@@ -18,10 +18,23 @@ from agent_framework import ChatAgent
 from agent_framework.ollama import OllamaChatClient
 from pydantic import Field
 
-from app.config import get_config
+from app.config import get_config, load_instructions
 
 # Logger for Org Context
 logger = logging.getLogger("workflow.org_context")
+
+# Fallback instructions if file not found
+_FALLBACK_INSTRUCTIONS = """You are an Organizational Context specialist. Your job is to retrieve and synthesize
+organizational context from the knowledge base to help answer questions.
+
+Use the available tools to find information:
+- get_instructions_context: Get high-level org context
+- search_knowledge: Search across all knowledge sources
+- get_notes_index: List available notes
+- read_note: Read a specific note
+- get_url_index: List indexed URLs
+
+Be thorough - if a note exists on a topic, READ IT and include the content."""
 
 
 # ============================================================================
@@ -347,66 +360,29 @@ class OrgContextAgent:
         if url_scraper_tool:
             tools.append(url_scraper_tool)
             url_scraper_instruction = """
-5. **fetch_indexed_url** (LAST RESORT): If you absolutely need live content from an indexed URL,
-   use the url_scraper tool. Only do this if:
-   - The information is not in instructions or notes
-   - The URL is in the URL index (use get_url_index first)
-   - The user specifically needs current/live information"""
+### 6. fetch_indexed_url (LAST RESORT)
+If you absolutely need live content from an indexed URL, use the url_scraper tool. Only do this if:
+- The information is not in instructions or notes
+- The URL is in the URL index (use get_url_index first)
+- The user specifically needs current/live information"""
         else:
             url_scraper_instruction = """
 Note: URL fetching is not available. If the user needs live URL content,
 inform them they can use the main assistant to fetch URLs."""
         
+        # Load instructions from file or use fallback
+        instructions = load_instructions(
+            config.agents.org_context.instructions_file,
+            url_scraper_instruction=url_scraper_instruction
+        )
+        if instructions is None:
+            logger.warning("Using fallback instructions for org_context")
+            instructions = _FALLBACK_INSTRUCTIONS
+        
         self._agent = chat_client.create_agent(
             name=config.agents.org_context.name,
             description=config.agents.org_context.description,
-            instructions=f"""You are an Organizational Context specialist. Your job is to retrieve and synthesize
-organizational context from the knowledge base to help answer questions.
-
-## Available Tools (in order of preference)
-
-1. **get_instructions_context**: Get high-level org context (team structure, processes, policies).
-   ALWAYS START HERE - this is the primary source of organizational context.
-
-2. **search_knowledge**: Search across all knowledge sources for specific topics.
-   Use this when looking for specific information.
-
-3. **get_notes_index**: List all available detailed notes with summaries.
-   Use this to find relevant documentation.
-
-4. **read_note**: Read the full content of a specific note.
-   Use after finding relevant notes in the index.
-
-5. **get_url_index**: List indexed URLs with their context and summaries.
-   Use this to see what external resources are available.
-{url_scraper_instruction}
-
-## Strategy for Answering Questions
-
-1. **Start with instructions**: Always call get_instructions_context first to understand
-   the organizational context.
-
-2. **Search if needed**: If the instructions don't have the answer, use search_knowledge
-   to find relevant content.
-
-3. **Check notes**: If search finds relevant notes, use read_note to get full details.
-
-4. **URL index last**: Only check URL index if local knowledge doesn't have the answer.
-
-5. **Fetch URLs rarely**: Only fetch live URL content if absolutely necessary and the
-   URL is already indexed.
-
-## Response Format
-
-When providing context:
-- Summarize the relevant information clearly
-- Cite which source the information came from (instructions, notes, URLs)
-- If information is uncertain or incomplete, say so
-- If you can't find relevant information, say so clearly
-
-Remember: Your goal is to provide organizational context to help answer questions,
-not to answer the questions directly. Provide the context and let the coordinator
-synthesize the final answer.""",
+            instructions=instructions,
             tools=tools,
         )
         logger.debug("OrgContextAgent initialized with knowledge retrieval tools")

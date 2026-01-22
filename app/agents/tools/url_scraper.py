@@ -16,10 +16,15 @@ from agent_framework import ChatAgent
 from agent_framework.ollama import OllamaChatClient
 from pydantic import Field
 
-from app.config import get_config
+from app.config import get_config, load_instructions
 
 # Logger for URL scraper
 logger = logging.getLogger("workflow.url_scraper")
+
+# Fallback instructions if file not found
+_FALLBACK_INSTRUCTIONS = """You are a URL content extraction specialist.
+Use the fetch_url tool to retrieve content from URLs, then summarize the content.
+Always use the fetch_url tool when a URL is provided."""
 
 
 def fetch_url(
@@ -139,22 +144,16 @@ class URLScraperAgent:
                 model_id=config.models.ollama.model_id,
             )
         
+        # Load instructions from file or use fallback
+        instructions = load_instructions(config.agents.url_scraper.instructions_file)
+        if instructions is None:
+            logger.warning("Using fallback instructions for url_scraper")
+            instructions = _FALLBACK_INSTRUCTIONS
+        
         self._agent = chat_client.create_agent(
             name=config.agents.url_scraper.name,
             description=config.agents.url_scraper.description,
-            instructions="""You are a URL content extraction specialist. Your job is to:
-1. Use the fetch_url tool to retrieve content from URLs
-2. Analyze and summarize the fetched content
-3. Extract key information, main points, and relevant details
-4. Present the information in a clear, organized format
-
-When given a URL:
-- First fetch the content using the fetch_url tool
-- Then provide a concise summary of what the page contains
-- Highlight any particularly relevant or notable information
-- If there are errors fetching the URL, explain the issue clearly
-
-Always use the fetch_url tool when a URL is provided.""",
+            instructions=instructions,
             tools=[fetch_url],
         )
         logger.debug("URLScraperAgent initialized with fetch_url tool")

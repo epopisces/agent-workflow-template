@@ -29,6 +29,10 @@ class AgentConfig(BaseModel):
     """Individual agent configuration."""
     name: str
     description: str
+    instructions_file: str | None = Field(
+        default=None,
+        description="Path to markdown file containing agent instructions"
+    )
 
 
 class AgentsConfig(BaseModel):
@@ -36,25 +40,29 @@ class AgentsConfig(BaseModel):
     coordinator: AgentConfig = Field(
         default_factory=lambda: AgentConfig(
             name="Coordinator",
-            description="Central agent that orchestrates tool agents"
+            description="Central agent that orchestrates tool agents",
+            instructions_file="config/instructions/coordinator.md"
         )
     )
     url_scraper: AgentConfig = Field(
         default_factory=lambda: AgentConfig(
             name="URLScraper",
-            description="Fetches and parses web content from URLs"
+            description="Fetches and parses web content from URLs",
+            instructions_file="config/instructions/url_scraper.md"
         )
     )
     knowledge_ingestion: AgentConfig = Field(
         default_factory=lambda: AgentConfig(
             name="KnowledgeIngestion",
-            description="Processes and stores content into organizational knowledge stores"
+            description="Processes and stores content into organizational knowledge stores",
+            instructions_file="config/instructions/knowledge_ingestion.md"
         )
     )
     org_context: AgentConfig = Field(
         default_factory=lambda: AgentConfig(
             name="OrgContext",
-            description="Retrieves organizational context from knowledge stores"
+            description="Retrieves organizational context from knowledge stores",
+            instructions_file="config/instructions/org_context.md"
         )
     )
 
@@ -214,3 +222,43 @@ def get_config() -> AppConfig:
     if _config is None:
         _config = load_config()
     return _config
+
+
+def _get_project_root() -> Path:
+    """Get the project root directory."""
+    return Path(__file__).parent.parent
+
+
+def load_instructions(instructions_file: str | None, **format_kwargs) -> str | None:
+    """Load agent instructions from a markdown file.
+    
+    Args:
+        instructions_file: Path to the instructions file (relative to project root).
+        **format_kwargs: Keyword arguments to format into the instructions template.
+        
+    Returns:
+        The instructions string, or None if the file doesn't exist.
+    """
+    if instructions_file is None:
+        return None
+    
+    project_root = _get_project_root()
+    instructions_path = project_root / instructions_file
+    
+    if not instructions_path.exists():
+        logger.warning(f"Instructions file not found: {instructions_path}")
+        return None
+    
+    try:
+        with open(instructions_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        # Apply format kwargs if any provided
+        if format_kwargs:
+            content = content.format(**format_kwargs)
+        
+        logger.debug(f"Loaded instructions from {instructions_file} ({len(content)} chars)")
+        return content
+    except Exception as e:
+        logger.error(f"Failed to load instructions from {instructions_file}: {e}")
+        return None
