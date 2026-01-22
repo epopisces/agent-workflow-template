@@ -106,3 +106,39 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 # Customizing the Template
 
 ---
+
+# Roadmap
+
+---
+
+## Planned Improvements
+
+### Knowledge Base Enhancements
+- [ ] **Improve "show full note" reliability**: When org_context finds a relevant note, ensure it automatically reads and returns the full content without requiring additional user prompts. Currently, the LLM may offer to show a note but fail to call the `read_note` tool on follow-up requests.
+- [ ] **Note search improvements**: Better keyword matching and relevance scoring for note searches
+
+### User Experience
+- [ ] **Reduce conversational friction**: The assistant should act proactively on clear intent rather than asking for confirmation (e.g., "Do I have notes on X?" should immediately search, not ask if user wants to search)
+- [ ] **Consistent follow-up actions**: Only offer actions that tools can actually perform
+
+---
+
+
+# Changelog
+---
+
+### 2026-01-22 (Claude Opus 4.5)
+- **Added**: Agent instructions now loaded from external markdown files in `config/instructions/`
+  - Users can customize agent behavior by editing `coordinator.md`, `org_context.md`, `url_scraper.md`, `knowledge_ingestion.md`
+  - Supports template variables (e.g., `{confidence_threshold}`) that are filled at runtime
+  - Falls back to embedded defaults if instruction files are missing
+- **Added**: `load_instructions()` helper function in `app/config.py` for loading instruction files
+- **Added**: `instructions_file` field to `AgentConfig` model
+
+### 2026-01-12 (Claude Opus 4.5)
+- **Fixed**: Coordinator now immediately searches knowledge base when user asks about notes/documentation instead of asking for permission
+- **Fixed**: Updated org_context agent instructions to automatically read full notes when found, rather than just summarizing
+- **Added**: "Don't offer what you can't do" guidance in coordinator instructions
+- **Added**: Roadmap section with planned improvements for note retrieval reliability
+
+

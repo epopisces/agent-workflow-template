@@ -22,10 +22,22 @@ agents:
   coordinator:
     name: "Coordinator"
     description: "Central agent that orchestrates tool agents and communicates with users"
+    instructions_file: "config/instructions/coordinator.md"
   
   url_scraper:
     name: "URLScraper"
     description: "Fetches and parses web content from provided URLs"
+    instructions_file: "config/instructions/url_scraper.md"
+  
+  knowledge_ingestion:
+    name: "KnowledgeIngestion"
+    description: "Processes and stores content into organizational knowledge stores"
+    instructions_file: "config/instructions/knowledge_ingestion.md"
+  
+  org_context:
+    name: "OrgContext"
+    description: "Retrieves organizational context from knowledge stores (instructions, notes, URLs)"
+    instructions_file: "config/instructions/org_context.md"
 
 scraper:
   # Request timeout in seconds
