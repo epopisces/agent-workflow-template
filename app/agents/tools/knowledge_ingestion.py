@@ -24,6 +24,7 @@ from agent_framework.ollama import OllamaChatClient
 from pydantic import BaseModel, Field
 
 from app.config import get_config, load_instructions
+from app.metrics import track_tool_call
 
 # Logger for Knowledge Ingestion
 logger = logging.getLogger("workflow.knowledge_ingestion")
@@ -119,6 +120,7 @@ def _ensure_directory(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
+@track_tool_call("knowledge_ingestion")
 def add_url_to_index(
     url: Annotated[str, Field(description="The URL to add to the index")],
     title: Annotated[str, Field(description="Title of the page")],
@@ -210,6 +212,7 @@ def add_url_to_index(
         return f"Error adding URL to index: {e}"
 
 
+@track_tool_call("knowledge_ingestion")
 def update_instructions_file(
     section: Annotated[str, Field(description="Section header to update (e.g., 'Team Structure', 'Processes')")],
     content: Annotated[str, Field(description="The content to add or update under this section")],
@@ -299,6 +302,7 @@ def update_instructions_file(
         return f"Error updating instructions file: {e}"
 
 
+@track_tool_call("knowledge_ingestion")
 def create_note(
     title: Annotated[str, Field(description="Title of the note")],
     content: Annotated[str, Field(description="Main content of the note in markdown format")],
@@ -457,6 +461,7 @@ def _update_notes_index(topic: str, metadata: NoteMetadata, filename: str) -> No
         }, f, default_flow_style=False, sort_keys=False)
 
 
+@track_tool_call("knowledge_ingestion")
 def get_knowledge_status() -> str:
     """Get the current status of all knowledge stores.
     
@@ -555,7 +560,7 @@ class KnowledgeIngestionAgent:
             logger.warning("Using fallback instructions for knowledge_ingestion")
             instructions = _FALLBACK_INSTRUCTIONS
         
-        self._agent = chat_client.create_agent(
+        self._agent = chat_client.as_agent(
             name=config.agents.knowledge_ingestion.name,
             description=config.agents.knowledge_ingestion.description,
             instructions=instructions,

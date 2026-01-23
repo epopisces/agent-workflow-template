@@ -401,15 +401,15 @@ class TestKnowledgeIngestionAgent:
         with patch("app.agents.tools.knowledge_ingestion.get_config", return_value=mock_config):
             with patch("app.agents.tools.knowledge_ingestion.OllamaChatClient") as mock_client:
                 mock_agent = MagicMock()
-                mock_client.return_value.create_agent.return_value = mock_agent
+                mock_client.return_value.as_agent.return_value = mock_agent
                 
                 from app.agents.tools.knowledge_ingestion import KnowledgeIngestionAgent
                 
                 agent = KnowledgeIngestionAgent()
                 
                 # Verify agent was created with correct parameters
-                mock_client.return_value.create_agent.assert_called_once()
-                call_kwargs = mock_client.return_value.create_agent.call_args[1]
+                mock_client.return_value.as_agent.assert_called_once()
+                call_kwargs = mock_client.return_value.as_agent.call_args[1]
                 
                 assert call_kwargs["name"] == "KnowledgeIngestion"
                 assert len(call_kwargs["tools"]) == 4  # 4 tools registered
@@ -419,7 +419,7 @@ class TestKnowledgeIngestionAgent:
         with patch("app.agents.tools.knowledge_ingestion.get_config", return_value=mock_config):
             with patch("app.agents.tools.knowledge_ingestion.OllamaChatClient") as mock_client:
                 mock_agent = MagicMock()
-                mock_client.return_value.create_agent.return_value = mock_agent
+                mock_client.return_value.as_agent.return_value = mock_agent
                 
                 from app.agents.tools.knowledge_ingestion import KnowledgeIngestionAgent
                 

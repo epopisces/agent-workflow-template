@@ -5,6 +5,7 @@ Tracks and stores performance metrics including response times, token usage,
 and operation statistics for agent workflows.
 """
 
+import functools
 import json
 import logging
 import time
@@ -12,7 +13,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any, Callable, Generator, TypeVar
 
 # Logger for metrics
 logger = logging.getLogger("workflow.metrics")
@@ -368,3 +369,66 @@ def configure_metrics(
         enabled=enabled,
     )
     return _metrics_collector
+
+
+# Type variable for generic function signatures
+F = TypeVar('F', bound=Callable[..., Any])
+
+
+def track_tool_call(agent: str, operation: str | None = None) -> Callable[[F], F]:
+    """Decorator to track metrics for tool function calls.
+    
+    Args:
+        agent: Name of the agent/tool (e.g., "org_context", "url_scraper").
+        operation: Operation name. If None, uses the function name.
+        
+    Returns:
+        Decorated function that records metrics.
+        
+    Example:
+        @track_tool_call("org_context", "read_note")
+        def read_note(filename: str) -> str:
+            ...
+    """
+    def decorator(func: F) -> F:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            op_name = operation or func.__name__
+            collector = get_metrics_collector()
+            
+            start_time = time.time()
+            success = True
+            error_message = None
+            result = None
+            
+            try:
+                result = func(*args, **kwargs)
+                return result
+            except Exception as e:
+                success = False
+                error_message = str(e)
+                raise
+            finally:
+                duration = time.time() - start_time
+                
+                # Calculate input/output lengths
+                input_length = sum(
+                    len(str(a)) for a in args
+                ) + sum(
+                    len(str(v)) for v in kwargs.values()
+                )
+                output_length = len(str(result)) if result else 0
+                
+                collector.record(
+                    operation=op_name,
+                    agent=agent,
+                    duration_seconds=duration,
+                    success=success,
+                    error_message=error_message,
+                    input_length=input_length,
+                    output_length=output_length,
+                    metadata={"tool_function": func.__name__},
+                )
+        
+        return wrapper  # type: ignore
+    return decorator

@@ -17,6 +17,7 @@ from agent_framework.ollama import OllamaChatClient
 from pydantic import Field
 
 from app.config import get_config, load_instructions
+from app.metrics import track_tool_call
 
 # Logger for URL scraper
 logger = logging.getLogger("workflow.url_scraper")
@@ -27,6 +28,7 @@ Use the fetch_url tool to retrieve content from URLs, then summarize the content
 Always use the fetch_url tool when a URL is provided."""
 
 
+@track_tool_call("url_scraper")
 def fetch_url(
     url: Annotated[str, Field(description="The URL to fetch and parse content from.")]
 ) -> str:
@@ -150,7 +152,7 @@ class URLScraperAgent:
             logger.warning("Using fallback instructions for url_scraper")
             instructions = _FALLBACK_INSTRUCTIONS
         
-        self._agent = chat_client.create_agent(
+        self._agent = chat_client.as_agent(
             name=config.agents.url_scraper.name,
             description=config.agents.url_scraper.description,
             instructions=instructions,

@@ -198,9 +198,9 @@ async def chat_loop(coordinator: CoordinatorAgent):
                     print(f"\n\nError: The model generated malformed JSON for a tool call.")
                     print("This is common with smaller models when handling complex content.")
                     print("\nSuggestions:")
-                    print("  1. Try a more capable model: ollama pull qwen2.5:7b")
-                    print("  2. Update config.yaml: model_id: \"qwen2.5:7b\"")
-                    print("  3. Or try: llama3.2:3b, mistral:7b, or qwen2.5:3b")
+                    print("  1. Try a more capable model: ollama pull qwen3:8b")
+                    print("  2. Update config.yaml: model_id: \"qwen3:8b\"")
+                    print("  3. Or try: llama3.2:3b, mistral:7b, or qwen3:4b")
                     print("\nYou can also try rephrasing your request more simply.\n")
                 else:
                     logger.error(f"Error during agent execution: {e}", exc_info=True)

@@ -110,7 +110,7 @@ class CoordinatorAgent:
             instructions = _FALLBACK_INSTRUCTIONS
         
         # Create the coordinator agent with tool agents as tools
-        self._agent = chat_client.create_agent(
+        self._agent = chat_client.as_agent(
             name=config.agents.coordinator.name,
             description=config.agents.coordinator.description,
             instructions=instructions,

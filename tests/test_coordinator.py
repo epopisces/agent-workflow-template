@@ -16,7 +16,7 @@ class TestCoordinatorAgent:
             mock_client = MagicMock()
             mock_agent = MagicMock()
             mock_agent.get_new_thread = MagicMock(return_value=MagicMock())
-            mock_client.create_agent = MagicMock(return_value=mock_agent)
+            mock_client.as_agent = MagicMock(return_value=mock_agent)
             mock_client_class.return_value = mock_client
             
             with patch("app.agents.coordinator.URLScraperAgent") as mock_scraper_class:
@@ -28,7 +28,7 @@ class TestCoordinatorAgent:
                 
                 # Should create 2 clients (one for coordinator, one for scraper)
                 assert mock_client_class.call_count == 2
-                mock_client.create_agent.assert_called()
+                mock_client.as_agent.assert_called()
     
     def test_init_with_custom_client(self, mock_get_config, mock_chat_client):
         """Test coordinator with provided client."""
@@ -40,9 +40,9 @@ class TestCoordinatorAgent:
             url_scraper=mock_scraper
         )
         
-        mock_chat_client.create_agent.assert_called_once()
+        mock_chat_client.as_agent.assert_called_once()
         # Verify the scraper tool was added
-        call_kwargs = mock_chat_client.create_agent.call_args[1]
+        call_kwargs = mock_chat_client.as_agent.call_args[1]
         assert "tools" in call_kwargs
     
     def test_new_thread(self, mock_get_config, mock_chat_client):
@@ -56,12 +56,12 @@ class TestCoordinatorAgent:
         )
         
         # Get initial thread
-        initial_call_count = mock_chat_client.create_agent.return_value.get_new_thread.call_count
+        initial_call_count = mock_chat_client.as_agent.return_value.get_new_thread.call_count
         
         # Create new thread
         coordinator.new_thread()
         
-        assert mock_chat_client.create_agent.return_value.get_new_thread.call_count == initial_call_count + 1
+        assert mock_chat_client.as_agent.return_value.get_new_thread.call_count == initial_call_count + 1
     
     @pytest.mark.asyncio
     async def test_run(self, mock_get_config, mock_chat_client):
@@ -77,7 +77,7 @@ class TestCoordinatorAgent:
         result = await coordinator.run("What's at https://example.com?")
         
         assert result == "This is a test response from the agent."
-        mock_chat_client.create_agent.return_value.run.assert_called_once()
+        mock_chat_client.as_agent.return_value.run.assert_called_once()
     
     @pytest.mark.asyncio
     async def test_run_stream(self, mock_get_config, mock_chat_client):
@@ -109,7 +109,7 @@ class TestCoordinatorAgent:
         
         agent = coordinator.agent
         
-        assert agent is mock_chat_client.create_agent.return_value
+        assert agent is mock_chat_client.as_agent.return_value
 
 
 class TestCoordinatorInstructions:
@@ -129,8 +129,8 @@ class TestCoordinatorInstructions:
         # Verify as_tool was called
         mock_scraper.as_tool.assert_called_once()
         
-        # Verify tool was passed to create_agent
-        call_kwargs = mock_chat_client.create_agent.call_args[1]
+        # Verify tool was passed to as_agent
+        call_kwargs = mock_chat_client.as_agent.call_args[1]
         assert mock_tool in call_kwargs["tools"]
     
     def test_coordinator_instructions_mention_url(self, mock_get_config, mock_chat_client):
@@ -143,7 +143,7 @@ class TestCoordinatorInstructions:
             url_scraper=mock_scraper
         )
         
-        call_kwargs = mock_chat_client.create_agent.call_args[1]
+        call_kwargs = mock_chat_client.as_agent.call_args[1]
         instructions = call_kwargs["instructions"]
         
         assert "url_scraper" in instructions.lower() or "url" in instructions.lower()

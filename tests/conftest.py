@@ -101,6 +101,6 @@ def mock_chat_client(mock_chat_response):
     agent.get_new_thread = MagicMock(return_value=MagicMock())
     agent.as_tool = MagicMock(return_value=MagicMock())
     
-    client.create_agent = MagicMock(return_value=agent)
+    client.as_agent = MagicMock(return_value=agent)
     
     return client

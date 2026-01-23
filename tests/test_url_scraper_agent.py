@@ -15,7 +15,7 @@ class TestURLScraperAgent:
         with patch("app.agents.tools.url_scraper.OllamaChatClient") as mock_client_class:
             mock_client = MagicMock()
             mock_agent = MagicMock()
-            mock_client.create_agent = MagicMock(return_value=mock_agent)
+            mock_client.as_agent = MagicMock(return_value=mock_agent)
             mock_client_class.return_value = mock_client
             
             agent = URLScraperAgent()
@@ -24,15 +24,15 @@ class TestURLScraperAgent:
                 host="http://localhost:11434",
                 model_id="test-model"
             )
-            mock_client.create_agent.assert_called_once()
+            mock_client.as_agent.assert_called_once()
     
     def test_init_with_custom_client(self, mock_get_config, mock_chat_client):
         """Test agent initialization with provided client."""
         agent = URLScraperAgent(chat_client=mock_chat_client)
         
-        mock_chat_client.create_agent.assert_called_once()
+        mock_chat_client.as_agent.assert_called_once()
         # Verify the agent was configured with the fetch_url tool
-        call_kwargs = mock_chat_client.create_agent.call_args[1]
+        call_kwargs = mock_chat_client.as_agent.call_args[1]
         assert "tools" in call_kwargs
         assert len(call_kwargs["tools"]) == 1
     
@@ -45,7 +45,7 @@ class TestURLScraperAgent:
             description="Custom description"
         )
         
-        mock_chat_client.create_agent.return_value.as_tool.assert_called_once_with(
+        mock_chat_client.as_agent.return_value.as_tool.assert_called_once_with(
             name="custom_scraper",
             description="Custom description",
             arg_name="request",
@@ -79,4 +79,4 @@ class TestURLScraperAgent:
         
         agent = scraper.agent
         
-        assert agent is mock_chat_client.create_agent.return_value
+        assert agent is mock_chat_client.as_agent.return_value

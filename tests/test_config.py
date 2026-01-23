@@ -22,7 +22,7 @@ class TestLoadConfig:
                 config = load_config(config_path="/nonexistent/path.yaml")
         
         assert config.models.ollama.host == "http://localhost:11434"
-        assert config.models.ollama.model_id == "qwen2.5:1.5b"
+        assert config.models.ollama.model_id == "qwen3:1.7b"
         assert config.scraper.timeout == 30
     
     def test_load_config_from_yaml(self):

@@ -9,14 +9,13 @@ logging:
 models:
   # Ollama settings for local inference
   # Recommended models for tool calling (knowledge ingestion, etc.):
-  #   - qwen2.5:7b (RECOMMENDED - best tool calling, needs ~5GB RAM)
-  #   - qwen2.5:3b (good tool calling, needs ~2GB RAM)
+  #   - ministral-3:8b (excellent tool calling, needs a beefy system + GPU to be performant)
+  #   - llama3.1:8b (good tool calling, needs ~5GB RAM)
   #   - llama3.2:3b (good balance, needs ~2GB RAM)
-  #   - ministral-3:8b (excellent reliable, needs ~5GB RAM)
-  # NOTE: qwen2.5:1.5b may fail on complex tool calls with JSON escaping errors
+  #   - qwen3:4b (excellent tool calling, needs ~4GB RAM)
   ollama:
     host: "http://localhost:11434"
-    model_id: "ministral-3:8b"
+    model_id: "qwen3:4b"
 
 agents:
   coordinator:
