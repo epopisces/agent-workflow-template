@@ -63,6 +63,17 @@ def init_session_state():
     
     if "session_start" not in st.session_state:
         st.session_state.session_start = datetime.now()
+    
+    if "event_loop" not in st.session_state:
+        st.session_state.event_loop = None
+
+
+def get_or_create_event_loop():
+    """Get or create a persistent event loop for async operations."""
+    if st.session_state.event_loop is None or st.session_state.event_loop.is_closed():
+        loop = asyncio.new_event_loop()
+        st.session_state.event_loop = loop
+    return st.session_state.event_loop
 
 
 def initialize_app():
@@ -396,8 +407,11 @@ def render_chat():
             
             with st.spinner("Thinking..."):
                 try:
-                    # Run async function
-                    response = asyncio.run(process_message(prompt))
+                    # Run async function using persistent event loop
+                    loop = get_or_create_event_loop()
+                    asyncio.set_event_loop(loop)
+                    response = loop.run_until_complete(process_message(prompt))
+                    
                     st.markdown(response)
                     
                     # Add to history

@@ -176,4 +176,8 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 - **Added**: "Don't offer what you can't do" guidance in coordinator instructions
 - **Added**: Roadmap section with planned improvements for note retrieval reliability
 
-
+### 2026-01-27 (Claude Opus 4.5)
+- **Added**: Streamlit frontend
+- **Added**: Knowledge ingestion decision guidelines for when to use each tool function
+- **Added**: Enhance CoordinatorAgent logging
+- **Fixed**: Implement persistent event loop to maintain conversation state across multiple user inputs
