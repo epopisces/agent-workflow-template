@@ -19,7 +19,7 @@ CLI (app/cli.py) → CoordinatorAgent → Tool Agents (url_scraper, knowledge_in
 ### Agent-as-Tool Pattern
 Tool agents expose themselves via `as_tool()`:
 ```python
-self._agent = chat_client.create_agent(
+self._agent = chat_client.as_agent(
     tools=[url_scraper.as_tool(), knowledge_ingestion.as_tool()],
 )
 ```
@@ -81,7 +81,7 @@ All loggers under `workflow.*` namespace:
    ```python
    class NewToolAgent:
        def __init__(self, chat_client: OllamaChatClient | None = None):
-           self._agent = chat_client.create_agent(tools=[tool_function])
+           self._agent = chat_client.as_agent(tools=[tool_function])
        
        def as_tool(self):
            return self._agent.as_tool()
@@ -99,6 +99,7 @@ All loggers under `workflow.*` namespace:
 
 ## Common Issues
 
-- **JSON escaping errors on tool calls**: Use larger model (qwen2.5:7b+ recommended over 1.5b)
+- **JSON escaping errors on tool calls**: Use larger model (qwen3:4b recommended over 1.7b)
+- **Chat outputs tool calls as text**: Some models (e.g., qwen3) may output tool calls as text; switch to recommended models for proper tool calling
 - **Slow responses**: Model inference is local; expect 5-15s depending on hardware
 - **Config not loading**: Ensure `.env` exists and `OLLAMA_HOST`/`OLLAMA_MODEL_ID` are set

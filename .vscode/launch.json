@@ -8,7 +8,21 @@
             "name": "Python Debugger: Module",
             "type": "debugpy",
             "request": "launch",
+            "prelaunchTask": "uv_sync",
             "module": "app.cli"
+        },
+        {
+            "name": "Python Debugger: streamlit app",
+            "type": "debugpy",
+            "request": "launch",
+            "prelaunchTask": "uv_sync",
+            "module": "streamlit",
+            "cwd": "${workspaceFolder}/app",
+            "args": [
+                "run",
+                "web.py",
+                "--server.port=8501",
+            ]
         },
     ]
 }

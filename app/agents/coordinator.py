@@ -110,7 +110,7 @@ class CoordinatorAgent:
             instructions = _FALLBACK_INSTRUCTIONS
         
         # Create the coordinator agent with tool agents as tools
-        self._agent = chat_client.create_agent(
+        self._agent = chat_client.as_agent(
             name=config.agents.coordinator.name,
             description=config.agents.coordinator.description,
             instructions=instructions,
@@ -158,12 +158,14 @@ class CoordinatorAgent:
         logger.info(f"Processing query (streaming): {query[:100]}{'...' if len(query) > 100 else ''}")
         logger.debug("Invoking coordinator agent with streaming")
         chunk_count = 0
+        total_chars = 0
         try:
             async for chunk in self._agent.run_stream(query, thread=self._thread):
                 if chunk.text:
                     chunk_count += 1
+                    total_chars += len(chunk.text)
                     yield chunk.text
         finally:
             # Print newline before debug log to avoid appending to stream output
             print()
-            logger.debug(f"Stream completed: {chunk_count} chunks")
+            logger.info(f"Response complete: {total_chars} chars in {chunk_count} chunks")

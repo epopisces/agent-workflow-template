@@ -17,7 +17,7 @@ logger = logging.getLogger("workflow.config")
 class OllamaConfig(BaseModel):
     """Ollama model configuration."""
     host: str = Field(default="http://localhost:11434")
-    model_id: str = Field(default="qwen2.5:1.5b")
+    model_id: str = Field(default="qwen3:1.7b")
 
 
 class ModelsConfig(BaseModel):
@@ -221,6 +221,21 @@ def get_config() -> AppConfig:
     global _config
     if _config is None:
         _config = load_config()
+    return _config
+
+
+def reload_config() -> AppConfig:
+    """Reload configuration from disk.
+    
+    This clears the cached config and reloads from config.yaml.
+    Useful when config has been modified externally.
+    
+    Returns:
+        Newly loaded AppConfig instance.
+    """
+    global _config
+    logger.info("Reloading configuration from disk")
+    _config = load_config()
     return _config
 
 

@@ -46,7 +46,7 @@ This is a **GitHub repository** providing a **Minimum Viable Product (MVP) templ
 - **Python**: 3.11+
 - **Ollama**: Installed and running
 - **RAM**: Minimum 8GB
-- **Recommended Models**: `llama3.2:3b`, `qwen2.5:3b`
+- **Recommended Models**: `llama3.2:3b`, `qwen3:4b`
 
 ---
 

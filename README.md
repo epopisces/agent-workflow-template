@@ -26,7 +26,7 @@ Download and install Ollama from [ollama.com](https://ollama.com/).
 
 ### 2. Pull a Model
 
-For systems with 8GB RAM and integrated graphics, we recommend `qwen2.5:3b` or `llama3.2:3b`:
+For systems with 8GB RAM and integrated graphics, we recommend `qwen3:4b` or `llama3.2:3b`:
 
 ```bash
 ollama pull llama3.2:3b
@@ -34,7 +34,7 @@ ollama pull llama3.2:3b
 
 Other lightweight options:
 - `phi3:mini` - Fast, good for simple tasks
-- `qwen2.5:3b` - Good tool calling support
+- `qwen3:4b` - Good tool calling support
 
 ### 3. Install Dependencies
 
@@ -84,7 +84,27 @@ Or use the entry point:
 workflow
 ```
 
+### Web Interface (Streamlit)
+
+For a browser-based experience:
+
+```bash
+# Using the entry point
+workflow-web
+
+# Or directly with streamlit
+streamlit run app/web.py
+```
+
+The web interface includes:
+- **Chat tab**: Conversational interface with message history
+- **Knowledge Base tab**: Browse instructions, indexed URLs, and notes
+- **Metrics tab**: View session statistics and metrics files
+- **Sidebar**: Connection status, log level control, and quick metrics
+
 ## Usage
+
+### CLI Commands
 
 Once running, you can:
 
@@ -128,12 +148,27 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 ---
 
 ### 2026-01-22 (Claude Opus 4.5)
+- **Added**: Streamlit web interface (`app/web.py`) as alternative to CLI
+  - Chat interface with message history
+  - Sidebar with connection status, session controls, log level selector, and metrics
+  - Knowledge Base Explorer tab to view instructions, indexed URLs, and notes
+  - Metrics Dashboard tab showing session stats and metrics files
+  - Run with `workflow-web` or `streamlit run app/web.py`
+- **Added**: "Reload Config" button in web UI sidebar to apply config.yaml changes at runtime
+  - Reloads config singleton, reinitializes coordinator with new model settings
+  - Displays toast notification with new model name
+- **Added**: `reload_config()` function in `app/config.py` to refresh cached configuration
 - **Added**: Agent instructions now loaded from external markdown files in `config/instructions/`
   - Users can customize agent behavior by editing `coordinator.md`, `org_context.md`, `url_scraper.md`, `knowledge_ingestion.md`
   - Supports template variables (e.g., `{confidence_threshold}`) that are filled at runtime
   - Falls back to embedded defaults if instruction files are missing
 - **Added**: `load_instructions()` helper function in `app/config.py` for loading instruction files
 - **Added**: `instructions_file` field to `AgentConfig` model
+- **Added**: Metrics tracking for tool function calls via `@track_tool_call` decorator
+  - All tool functions in `org_context`, `url_scraper`, and `knowledge_ingestion` now record metrics
+  - Includes operation duration, input/output lengths, success/failure status
+  - Metrics appear alongside coordinator metrics in daily `.jsonl` files
+- **Fixed**: Updated agent-framework API from `create_agent()` to `as_agent()` to match latest version
 
 ### 2026-01-12 (Claude Opus 4.5)
 - **Fixed**: Coordinator now immediately searches knowledge base when user asks about notes/documentation instead of asking for permission
@@ -141,4 +176,8 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 - **Added**: "Don't offer what you can't do" guidance in coordinator instructions
 - **Added**: Roadmap section with planned improvements for note retrieval reliability
 
-
+### 2026-01-27 (Claude Opus 4.5)
+- **Added**: Streamlit frontend
+- **Added**: Knowledge ingestion decision guidelines for when to use each tool function
+- **Added**: Enhance CoordinatorAgent logging
+- **Fixed**: Implement persistent event loop to maintain conversation state across multiple user inputs

@@ -19,6 +19,7 @@ from agent_framework.ollama import OllamaChatClient
 from pydantic import Field
 
 from app.config import get_config, load_instructions
+from app.metrics import track_tool_call
 
 # Logger for Org Context
 logger = logging.getLogger("workflow.org_context")
@@ -50,6 +51,7 @@ def _get_project_root() -> Path:
 # Context Retrieval Tools
 # ============================================================================
 
+@track_tool_call("org_context")
 def get_instructions_context() -> str:
     """Get the high-level organizational context from the instructions file.
     
@@ -80,6 +82,7 @@ def get_instructions_context() -> str:
         return f"Error reading instructions file: {e}"
 
 
+@track_tool_call("org_context")
 def get_notes_index() -> str:
     """Get the index of all available notes with their metadata.
     
@@ -146,6 +149,7 @@ def get_notes_index() -> str:
         return f"Error reading notes index: {e}"
 
 
+@track_tool_call("org_context")
 def read_note(
     filename: Annotated[str, Field(description="The filename of the note to read (e.g., '20251227-my-note.md')")]
 ) -> str:
@@ -184,6 +188,7 @@ def read_note(
         return f"Error reading note: {e}"
 
 
+@track_tool_call("org_context")
 def get_url_index() -> str:
     """Get the index of organizational URLs with metadata.
     
@@ -234,6 +239,7 @@ def get_url_index() -> str:
         return f"Error reading URL index: {e}"
 
 
+@track_tool_call("org_context")
 def search_knowledge(
     query: Annotated[str, Field(description="Search terms to find in notes and instructions")]
 ) -> str:
@@ -379,7 +385,7 @@ inform them they can use the main assistant to fetch URLs."""
             logger.warning("Using fallback instructions for org_context")
             instructions = _FALLBACK_INSTRUCTIONS
         
-        self._agent = chat_client.create_agent(
+        self._agent = chat_client.as_agent(
             name=config.agents.org_context.name,
             description=config.agents.org_context.description,
             instructions=instructions,
