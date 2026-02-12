@@ -156,6 +156,9 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 - **Added**: `knowledge_retrieval.py` — traditional function-based tool (not agent-as-tool)
   - `get_available_tags()`: Collects all unique tags from notes index and URL index with counts
   - `search_by_tags(tags)`: Returns matching notes/URLs with summaries for given tags
+- **Fixed**: Coordinator now strips leaked tool-call syntax (e.g., `<|python_tag|>{...}`) from model output
+- **Removed**: Copyright headers from all Python files (project is open source)
+- **Added**: Mermaid architecture diagram in `docs/architecture.md`
 - **Changed**: Made repo a proper GitHub template by separating sample/example files from runtime-generated data
   - Created `.sample` copies of knowledge files; added runtime-generated files to `.gitignore`
 
