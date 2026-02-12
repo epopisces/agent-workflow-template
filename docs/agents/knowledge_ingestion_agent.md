@@ -48,10 +48,10 @@ Supports confidence/relevance scoring with human-in-the-loop review for content 
 - **Review requests**: When confidence/relevance below thresholds, requests human approval
 
 ### Context & Knowledge Stores
-- **Instructions File** (`knowledge/instructions.md`): High-level org context
-- **URL Index** (`knowledge/url_index.yaml`): Indexed URLs with metadata
-- **Notes** (`notes/`): Topic-organized markdown files with frontmatter
-- **Notes Index** (`notes/_index.yaml`): Index of notes per topic
+- **Context File** (`knowledge/context.md`): High-level org context
+- **URL Index** (`knowledge/sources/url_index.yaml`): Indexed URLs with metadata
+- **Notes** (`knowledge/notes/`): Topic-organized markdown files with frontmatter
+- **Notes Index** (`knowledge/notes/_index.yaml`): Index of notes per topic
 
 ### Memory Model
 - **Type**: Persistent (file-based)
@@ -67,7 +67,7 @@ Supports confidence/relevance scoring with human-in-the-loop review for content 
 | Tool Name | Purpose | Required |
 |-----------|---------|----------|
 | add_url_to_index | Add URLs with metadata to the URL index | Yes |
-| update_instructions_file | Update org context in instructions file | Yes |
+| update_instructions_file | Update org context in context file | Yes |
 | create_note | Create markdown notes with frontmatter | Yes |
 | get_knowledge_status | Check status of all knowledge stores | Yes |
 
@@ -149,13 +149,13 @@ knowledge:
   relevance_threshold: 0.6
   
   # File paths
-  instructions_file: "knowledge/instructions.md"
-  url_index_file: "knowledge/url_index.yaml"
+  context_file: "knowledge/context.md"
+  url_index_file: "knowledge/sources/url_index.yaml"
   
   # Notes topics configuration
   notes_topics:
     default:
-      directory: "notes"
+      directory: "knowledge/notes"
       template: "config/templates/note_template.md"
       description: "General notes and documentation"
       frontmatter_defaults:

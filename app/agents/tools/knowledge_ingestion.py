@@ -246,17 +246,17 @@ def update_instructions_file(
             review_reasons.append(f"relevance ({relevance:.2f}) below threshold ({config.knowledge.relevance_threshold})")
         
         logger.info(f"[TOOL RESULT] update_instructions_file requires review: {', '.join(review_reasons)}")
-        return f"REVIEW_REQUIRED: Cannot update instructions without human approval. Reasons: {', '.join(review_reasons)}. " \
+        return f"REVIEW_REQUIRED: Cannot update context file without human approval. Reasons: {', '.join(review_reasons)}. " \
                f"Please confirm you want to {action} section '{section}'. Content preview: {content[:200]}..."
     
     try:
         project_root = _get_project_root()
-        instructions_path = project_root / config.knowledge.instructions_file
-        _ensure_directory(instructions_path.parent)
+        context_path = project_root / config.knowledge.context_file
+        _ensure_directory(context_path.parent)
         
         # Load existing file or create template
-        if instructions_path.exists():
-            with open(instructions_path, "r", encoding="utf-8") as f:
+        if context_path.exists():
+            with open(context_path, "r", encoding="utf-8") as f:
                 file_content = f.read()
         else:
             file_content = f"# Organizational Instructions\n\nLast Updated: {datetime.now().strftime('%Y-%m-%d')}\n\n"
@@ -291,7 +291,7 @@ def update_instructions_file(
         )
         
         # Write back
-        with open(instructions_path, "w", encoding="utf-8") as f:
+        with open(context_path, "w", encoding="utf-8") as f:
             f.write(file_content)
         
         logger.info(f"[TOOL RESULT] update_instructions_file completed: section='{section}'")
@@ -477,14 +477,14 @@ def get_knowledge_status() -> str:
     status_parts = []
     
     # Instructions file status
-    instructions_path = project_root / config.knowledge.instructions_file
-    if instructions_path.exists():
-        with open(instructions_path, "r", encoding="utf-8") as f:
+    context_path = project_root / config.knowledge.context_file
+    if context_path.exists():
+        with open(context_path, "r", encoding="utf-8") as f:
             content = f.read()
         sections = re.findall(r"^## (.+)$", content, re.MULTILINE)
-        status_parts.append(f"Instructions File: {len(sections)} sections - {', '.join(sections)}")
+        status_parts.append(f"Context File: {len(sections)} sections - {', '.join(sections)}")
     else:
-        status_parts.append("Instructions File: Not created yet")
+        status_parts.append("Context File: Not created yet")
     
     # URL index status
     url_index_path = project_root / config.knowledge.url_index_file

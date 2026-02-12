@@ -135,10 +135,10 @@ def load_knowledge_status() -> dict:
         "notes": {"exists": False, "count": 0, "files": []},
     }
     
-    # Instructions file
-    instructions_path = project_root / config.knowledge.instructions_file
-    if instructions_path.exists():
-        stat = instructions_path.stat()
+    # Context file
+    context_path = project_root / config.knowledge.context_file
+    if context_path.exists():
+        stat = context_path.stat()
         status["instructions"] = {
             "exists": True,
             "size": stat.st_size,
@@ -446,17 +446,17 @@ def render_knowledge_explorer():
     project_root = get_project_root()
     config = st.session_state.config
     
-    tab1, tab2, tab3 = st.tabs(["📋 Instructions", "🔗 URL Index", "📝 Notes"])
+    tab1, tab2, tab3 = st.tabs(["📋 Org Context", "🔗 URL Index", "📝 Notes"])
     
     with tab1:
-        st.subheader("Organizational Instructions")
-        instructions_path = project_root / config.knowledge.instructions_file
-        if instructions_path.exists():
-            with open(instructions_path, "r", encoding="utf-8") as f:
+        st.subheader("Organizational Context")
+        context_path = project_root / config.knowledge.context_file
+        if context_path.exists():
+            with open(context_path, "r", encoding="utf-8") as f:
                 content = f.read()
             st.markdown(content)
         else:
-            st.info("No instructions file found. Use the chat to add organizational context.")
+            st.info("No context file found. Use the chat to add organizational context.")
     
     with tab2:
         st.subheader("Indexed URLs")

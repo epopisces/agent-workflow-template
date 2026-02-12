@@ -103,3 +103,10 @@ Desktop.ini
 # Metrics data (contains session-specific data)
 metrics/
 !metrics/.gitkeep
+
+# Runtime-generated knowledge data (template samples are tracked)
+knowledge/context.md
+knowledge/sources/url_index.yaml
+knowledge/notes/_index.yaml
+knowledge/notes/*.md
+!knowledge/**/*.sample.*

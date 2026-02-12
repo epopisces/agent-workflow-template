@@ -12,10 +12,10 @@ models:
     host: "http://localhost:11434"
     # Recommended models for tool calling (knowledge ingestion, etc.):
     #   - ministral-3:8b (excellent tool calling, needs a beefy system + GPU to be performant)
-    #   - llama3.1:8b (good tool calling, needs ~5GB RAM)
-    #   - llama3.2:3b (good balance, needs ~2GB RAM)
+    #   - llama3.1:8b (good tool calling, needs ~6GB RAM)
+    #   - llama3.2:3b (lightweight, good balance, needs ~2GB RAM)
     #   - qwen3:4b (excellent tool calling, needs ~4GB RAM)
-    model_id: "qwen3:4b"
+    model_id: "llama3.1:8b"
 
 agents:
   coordinator:
@@ -39,8 +39,8 @@ agents:
     instructions_file: "config/instructions/org_context.md"
 
 scraper:
-  # Request timeout in seconds
-  timeout: 30
+  # Request timeout in seconds (10s is sufficient for most sites)
+  timeout: 10
   # User agent for web requests
   user_agent: "MultiAgentWorkflow/0.1 (Educational/Personal Use)"
   # Maximum content length to process (in characters)
@@ -56,17 +56,17 @@ knowledge:
   # Content with relevance below this requires human approval before storing
   relevance_threshold: 0.6
   
-  # Instructions file path (high-level org context summaries)
-  instructions_file: "knowledge/instructions.md"
+  # Org context file path (high-level org context summaries)
+  context_file: "knowledge/context.md"
   
   # Org URL index file path (index of org-relevant URLs with metadata)
-  url_index_file: "knowledge/url_index.yaml"
+  url_index_file: "knowledge/sources/url_index.yaml"
   
   # User notes configuration by topic
   # Each topic has: directory, template file, and description
   notes_topics:
     default:
-      directory: "notes"
+      directory: "knowledge/notes"
       template: "config/templates/note_template.md"
       description: "General notes and documentation"
       # Frontmatter defaults for this topic

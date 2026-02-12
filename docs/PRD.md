@@ -2,7 +2,7 @@
 
 ## 1. Elevator Pitch
 
-A locally-hosted Python/Streamlit application that enables individual end users to process web content, files, and text through a coordinator agent that orchestrates specialized tool agents. Users ask questions like "Is this URL useful for my team?" and receive polished, context-aware responses written in their personal style—ready to share with peers. The modular plugin architecture allows easy addition of new tool agents, while flexible model configuration supports local Ollama models, hosted APIs, or Azure AI Foundry.
+A locally-hosted Python/Streamlit application that enables individual end users to process web content, files, and text through a coordinator agent that orchestrates specialized tools and agents-as-tools. Users ask questions like "Is this URL useful for my team?" and receive polished, context-aware responses written in their personal style—ready to share with peers. The modular plugin architecture allows easy addition of new tool agents, while flexible model configuration supports local Ollama models, hosted APIs (OpenAI, etc), or Azure AI Foundry.
 
 ## 2. Who Is This App For
 

@@ -147,6 +147,29 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 # Changelog
 ---
 
+### 2026-02-12 (Claude Opus 4.6)
+- **Changed**: Reorganized knowledge folder structure for unified knowledge management
+  - Moved `notes/` under `knowledge/notes/` — all knowledge under one tree
+  - Renamed `knowledge/instructions.md` → `knowledge/context.md` (avoids confusion with agent instructions)
+  - Moved `knowledge/url_index.yaml` → `knowledge/sources/url_index.yaml` (separates provenance from content)
+  - Updated all config paths (`context_file`, `url_index_file`, `notes_topics.default.directory`)
+- **Added**: `knowledge_retrieval.py` — traditional function-based tool (not agent-as-tool)
+  - `get_available_tags()`: Collects all unique tags from notes index and URL index with counts
+  - `search_by_tags(tags)`: Returns matching notes/URLs with summaries for given tags
+- **Changed**: Made repo a proper GitHub template by separating sample/example files from runtime-generated data
+  - Created `.sample` copies of knowledge files; added runtime-generated files to `.gitignore`
+
+### 2026-02-03 (Claude Opus 4.5)
+- **Fixed**: "Event loop is closed" error when sending multiple messages in Streamlit web UI
+  - Implemented persistent event loop stored in session state instead of creating/closing per message
+- **Added**: "Response complete" INFO-level log when coordinator finishes streaming response
+  - Shows total character count and chunk count for visibility
+- **Optimized**: URL scraper performance improvements for better responsiveness
+  - Connection pooling with HTTP/2 support (reuses connections across requests)
+  - Reduced default timeout from 30s to 10s (sufficient for most sites)
+  - Switched from `html.parser` to `lxml` for 5-10x faster HTML parsing
+- **Added**: Dependencies `lxml>=5.0.0` and `httpx[http2]` to pyproject.toml
+
 ### 2026-01-22 (Claude Opus 4.5)
 - **Added**: Streamlit web interface (`app/web.py`) as alternative to CLI
   - Chat interface with message history

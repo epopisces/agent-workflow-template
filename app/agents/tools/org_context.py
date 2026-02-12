@@ -53,33 +53,33 @@ def _get_project_root() -> Path:
 
 @track_tool_call("org_context")
 def get_instructions_context() -> str:
-    """Get the high-level organizational context from the instructions file.
+    """Get the high-level organizational context from the context file.
     
     This is the PRIMARY source of organizational context. Always check this first.
     
     Returns:
-        The contents of the instructions file, or an error message.
+        The contents of the context file, or an error message.
     """
     logger.info("[TOOL CALL] get_instructions_context")
     config = get_config()
     
     try:
         project_root = _get_project_root()
-        instructions_path = project_root / config.knowledge.instructions_file
+        context_path = project_root / config.knowledge.context_file
         
-        if not instructions_path.exists():
-            logger.warning(f"Instructions file not found: {instructions_path}")
-            return "No organizational instructions file found. The organization context has not been set up yet."
+        if not context_path.exists():
+            logger.warning(f"Context file not found: {context_path}")
+            return "No organizational context file found. The organization context has not been set up yet."
         
-        with open(instructions_path, "r", encoding="utf-8") as f:
+        with open(context_path, "r", encoding="utf-8") as f:
             content = f.read()
         
         logger.info(f"[TOOL RESULT] get_instructions_context: {len(content)} chars")
-        return f"=== Organizational Instructions ===\n\n{content}"
+        return f"=== Organizational Context ===\n\n{content}"
         
     except Exception as e:
-        logger.error(f"Failed to read instructions file: {e}")
-        return f"Error reading instructions file: {e}"
+        logger.error(f"Failed to read context file: {e}")
+        return f"Error reading context file: {e}"
 
 
 @track_tool_call("org_context")
@@ -263,10 +263,10 @@ def search_knowledge(
         query_lower = query.lower()
         query_terms = query_lower.split()
         
-        # Search instructions file
-        instructions_path = project_root / config.knowledge.instructions_file
-        if instructions_path.exists():
-            with open(instructions_path, "r", encoding="utf-8") as f:
+        # Search context file
+        context_path = project_root / config.knowledge.context_file
+        if context_path.exists():
+            with open(context_path, "r", encoding="utf-8") as f:
                 content = f.read()
             
             if any(term in content.lower() for term in query_terms):
@@ -278,7 +278,7 @@ def search_knowledge(
                         matching_sections.append(section[:500] + "..." if len(section) > 500 else section)
                 
                 if matching_sections:
-                    results.append("=== From Instructions ===")
+                    results.append("=== From Org Context ===")
                     results.extend(matching_sections[:3])  # Limit to 3 sections
                     results.append("")
         

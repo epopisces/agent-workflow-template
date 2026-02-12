@@ -99,18 +99,18 @@ class KnowledgeConfig(BaseModel):
         le=1.0,
         description="Relevance threshold below which human review is required"
     )
-    instructions_file: str = Field(
-        default="knowledge/instructions.md",
-        description="Path to the instructions file with org context"
+    context_file: str = Field(
+        default="knowledge/context.md",
+        description="Path to the org context file"
     )
     url_index_file: str = Field(
-        default="knowledge/url_index.yaml",
+        default="knowledge/sources/url_index.yaml",
         description="Path to the URL index file"
     )
     notes_topics: dict[str, NoteTopicConfig] = Field(
         default_factory=lambda: {
             "default": NoteTopicConfig(
-                directory="notes",
+                directory="knowledge/notes",
                 template="config/templates/note_template.md",
                 description="General notes and documentation",
                 frontmatter_defaults={

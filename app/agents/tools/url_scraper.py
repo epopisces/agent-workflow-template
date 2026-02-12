@@ -6,6 +6,7 @@ as an agent-as-tool by the Coordinator agent.
 """
 
 import asyncio
+import atexit
 import logging
 from typing import Annotated
 from urllib.parse import urlparse
@@ -21,6 +22,40 @@ from app.metrics import track_tool_call
 
 # Logger for URL scraper
 logger = logging.getLogger("workflow.url_scraper")
+
+# Connection-pooled HTTP client (lazy initialized)
+_http_client: httpx.Client | None = None
+
+
+def _get_http_client() -> httpx.Client:
+    """Get or create a connection-pooled HTTP client.
+    
+    Uses HTTP/2 and connection pooling for better performance.
+    """
+    global _http_client
+    if _http_client is None:
+        config = get_config()
+        _http_client = httpx.Client(
+            timeout=config.scraper.timeout,
+            follow_redirects=True,
+            headers={"User-Agent": config.scraper.user_agent},
+            http2=True,  # Enable HTTP/2 for faster connections
+            limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
+        )
+        logger.debug("Created connection-pooled HTTP client with HTTP/2")
+    return _http_client
+
+
+def _close_http_client() -> None:
+    """Close the HTTP client on module cleanup."""
+    global _http_client
+    if _http_client is not None:
+        _http_client.close()
+        _http_client = None
+
+
+# Register cleanup on exit
+atexit.register(_close_http_client)
 
 # Fallback instructions if file not found
 _FALLBACK_INSTRUCTIONS = """You are a URL content extraction specialist.
@@ -58,18 +93,15 @@ def fetch_url(
     
     logger.debug(f"Fetching URL: {url}")
     
-    # Fetch content synchronously (tool functions should be sync)
+    # Fetch content using connection-pooled client
     try:
-        with httpx.Client(
-            timeout=config.scraper.timeout,
-            follow_redirects=True,
-            headers={"User-Agent": config.scraper.user_agent}
-        ) as client:
-            response = client.get(url)
-            response.raise_for_status()
-            html_content = response.text
+        client = _get_http_client()
+        response = client.get(url)
+        response.raise_for_status()
+        html_content = response.text
         logger.debug(f"Fetched {len(html_content)} bytes from {url}")
     except httpx.TimeoutException:
+        config = get_config()
         logger.error(f"Request timeout after {config.scraper.timeout}s: {url}")
         return f"Error: Request timed out after {config.scraper.timeout} seconds"
     except httpx.HTTPStatusError as e:
@@ -79,9 +111,9 @@ def fetch_url(
         logger.error(f"Request error for {url}: {e}")
         return f"Error: Could not fetch URL: {e}"
     
-    # Parse HTML and extract text
+    # Parse HTML and extract text using lxml for speed
     try:
-        soup = BeautifulSoup(html_content, "html.parser")
+        soup = BeautifulSoup(html_content, "lxml")
         
         # Remove unwanted elements
         for element in soup(["script", "style", "nav", "header", "footer", "aside", "form"]):

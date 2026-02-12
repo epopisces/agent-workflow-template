@@ -45,7 +45,7 @@ def mock_config(temp_knowledge_dir):
         knowledge=KnowledgeConfig(
             confidence_threshold=0.7,
             relevance_threshold=0.6,
-            instructions_file=str(temp_knowledge_dir / "instructions.md"),
+            context_file=str(temp_knowledge_dir / "context.md"),
             url_index_file=str(temp_knowledge_dir / "url_index.yaml"),
             notes_topics={
                 "default": NoteTopicConfig(
@@ -192,10 +192,10 @@ class TestUpdateInstructionsFile:
                 
                 assert "Successfully updated" in result
                 
-                instructions_path = temp_knowledge_dir / "instructions.md"
-                assert instructions_path.exists()
+                context_path = temp_knowledge_dir / "context.md"
+                assert context_path.exists()
                 
-                with open(instructions_path) as f:
+                with open(context_path) as f:
                     content = f.read()
                 
                 assert "## Team Structure" in content
@@ -204,9 +204,9 @@ class TestUpdateInstructionsFile:
     def test_append_to_existing_section(self, mock_config, temp_knowledge_dir):
         """Test appending to an existing section."""
         # Create initial file
-        instructions_path = temp_knowledge_dir / "instructions.md"
-        instructions_path.parent.mkdir(parents=True, exist_ok=True)
-        instructions_path.write_text("# Instructions\n\nLast Updated: 2024-01-01\n\n## Team Structure\n\nExisting content.\n")
+        context_path = temp_knowledge_dir / "context.md"
+        context_path.parent.mkdir(parents=True, exist_ok=True)
+        context_path.write_text("# Instructions\n\nLast Updated: 2024-01-01\n\n## Team Structure\n\nExisting content.\n")
         
         with patch("app.agents.tools.knowledge_ingestion.get_config", return_value=mock_config):
             with patch("app.agents.tools.knowledge_ingestion._get_project_root", return_value=temp_knowledge_dir):
@@ -220,7 +220,7 @@ class TestUpdateInstructionsFile:
                     relevance=0.8,
                 )
                 
-                with open(instructions_path) as f:
+                with open(context_path) as f:
                     content = f.read()
                 
                 assert "Existing content." in content
@@ -229,9 +229,9 @@ class TestUpdateInstructionsFile:
     def test_replace_section(self, mock_config, temp_knowledge_dir):
         """Test replacing a section's content."""
         # Create initial file
-        instructions_path = temp_knowledge_dir / "instructions.md"
-        instructions_path.parent.mkdir(parents=True, exist_ok=True)
-        instructions_path.write_text("# Instructions\n\nLast Updated: 2024-01-01\n\n## Team Structure\n\nOld content to replace.\n")
+        context_path = temp_knowledge_dir / "context.md"
+        context_path.parent.mkdir(parents=True, exist_ok=True)
+        context_path.write_text("# Instructions\n\nLast Updated: 2024-01-01\n\n## Team Structure\n\nOld content to replace.\n")
         
         with patch("app.agents.tools.knowledge_ingestion.get_config", return_value=mock_config):
             with patch("app.agents.tools.knowledge_ingestion._get_project_root", return_value=temp_knowledge_dir):
@@ -245,7 +245,7 @@ class TestUpdateInstructionsFile:
                     relevance=0.8,
                 )
                 
-                with open(instructions_path) as f:
+                with open(context_path) as f:
                     content = f.read()
                 
                 assert "Old content to replace." not in content

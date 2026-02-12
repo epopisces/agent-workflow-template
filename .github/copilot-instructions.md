@@ -39,9 +39,9 @@ def fetch_url(url: Annotated[str, Field(description="...")]) -> str:
 ```
 
 ### Knowledge Store Structure
-- `knowledge/instructions.md`: High-level org context (edited by knowledge_ingestion agent)
-- `knowledge/url_index.yaml`: Indexed URLs with metadata
-- `notes/`: Markdown files with YAML frontmatter, indexed by `_index.yaml`
+- `knowledge/context.md`: High-level org context (edited by knowledge_ingestion agent)
+- `knowledge/sources/url_index.yaml`: Indexed URLs with metadata
+- `knowledge/notes/`: Markdown files with YAML frontmatter, indexed by `_index.yaml`
 
 ## Development Workflow
 
