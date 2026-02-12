@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Progress Tracker for Agent Operations.
 
 Provides visual feedback during long-running agent processes by displaying

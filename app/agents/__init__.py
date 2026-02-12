@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Agents package for Multi-Agent Workflow."""
 
 from .coordinator import CoordinatorAgent

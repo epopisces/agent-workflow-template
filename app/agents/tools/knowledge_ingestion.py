@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Knowledge Ingestion Agent Tool.
 
 This agent processes content and stores it in organizational knowledge stores:

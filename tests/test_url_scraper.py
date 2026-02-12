@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Tests for URL Scraper tool function."""
 
 import pytest

@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Web runner for Streamlit application.
 
 This module provides an entry point to launch the Streamlit web interface.

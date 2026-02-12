@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Pytest configuration and fixtures."""
 
 import pytest

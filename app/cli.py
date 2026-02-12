@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Command Line Interface for Multi-Agent Workflow.
 
 Simple CLI chat interface for interacting with the Coordinator agent.

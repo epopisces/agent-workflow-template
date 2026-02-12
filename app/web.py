@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Streamlit Web Interface for Multi-Agent Workflow.
 
 A web-based chat interface for interacting with the Coordinator agent,

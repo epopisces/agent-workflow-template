@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """URL Scraper Agent Tool.
 
 This agent fetches and parses web content from URLs. It is designed to be used

@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Configuration management for Multi-Agent Workflow."""
 
 import logging

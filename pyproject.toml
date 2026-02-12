@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "agent-framework-ollama>=0.0.1a1",
+    "agent-framework-devui>=1.0.0b1",
     "httpx[http2]>=0.27.0",
     "beautifulsoup4>=4.12.0",
     "lxml>=5.0.0",
@@ -26,6 +27,7 @@ dev = [
 [project.scripts]
 workflow = "app.cli:main"
 workflow-web = "app.web_runner:main"
+workflow-devui = "app.devui_runner:main"
 
 [build-system]
 requires = ["hatchling"]

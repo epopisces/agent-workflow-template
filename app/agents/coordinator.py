@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Coordinator Agent.
 
 The central orchestrator that communicates with users and routes tasks
@@ -6,6 +5,7 @@ to specialized tool agents.
 """
 
 import logging
+import re
 
 from agent_framework import ChatAgent
 from agent_framework.ollama import OllamaChatClient
@@ -17,6 +17,25 @@ from app.agents.tools.org_context import OrgContextAgent
 
 # Logger for coordinator agent
 logger = logging.getLogger("workflow.coordinator")
+
+# Patterns that indicate a model leaked tool-call syntax as text.
+# These occur when a sub-agent outputs raw tool calls instead of using the
+# tool-calling protocol.  We strip them so they don't reach the user.
+_TOOL_CALL_LEAK_PATTERNS = [
+    re.compile(r"<\|python_tag\|>\s*\{.*", re.DOTALL),       # Llama-family
+    re.compile(r"<tool_call>.*?</tool_call>", re.DOTALL),     # Generic XML
+    re.compile(r"<\|tool_call\|>.*?<\|/tool_call\|>", re.DOTALL),  # ChatML variants
+]
+
+
+def _strip_tool_call_leaks(text: str) -> str:
+    """Remove leaked tool-call syntax from model output."""
+    for pattern in _TOOL_CALL_LEAK_PATTERNS:
+        cleaned = pattern.sub("", text)
+        if cleaned != text:
+            logger.debug(f"Stripped leaked tool-call syntax ({pattern.pattern[:30]}...)")
+            text = cleaned
+    return text.strip()
 
 # Fallback instructions if file not found
 _FALLBACK_INSTRUCTIONS = """You are a helpful assistant that helps the end user process information, analyze web content, and manage organizational knowledge.
@@ -143,8 +162,9 @@ class CoordinatorAgent:
         logger.info(f"Processing query: {query[:100]}{'...' if len(query) > 100 else ''}")
         logger.debug("Invoking coordinator agent")
         result = await self._agent.run(query, thread=self._thread)
-        logger.debug(f"Coordinator response received: {len(result.text)} chars")
-        return result.text
+        text = _strip_tool_call_leaks(result.text)
+        logger.debug(f"Coordinator response received: {len(text)} chars")
+        return text
     
     async def run_stream(self, query: str):
         """Run the coordinator with streaming output.
@@ -162,9 +182,11 @@ class CoordinatorAgent:
         try:
             async for chunk in self._agent.run_stream(query, thread=self._thread):
                 if chunk.text:
-                    chunk_count += 1
-                    total_chars += len(chunk.text)
-                    yield chunk.text
+                    cleaned = _strip_tool_call_leaks(chunk.text)
+                    if cleaned:
+                        chunk_count += 1
+                        total_chars += len(cleaned)
+                        yield cleaned
         finally:
             # Print newline before debug log to avoid appending to stream output
             print()

@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Tests for Knowledge Ingestion Agent."""
 
 import os

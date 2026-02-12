@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Logging configuration for Multi-Agent Workflow.
 
 Provides consistent logging across the application with configurable levels.

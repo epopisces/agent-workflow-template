@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Metrics Collection for Agent Operations.
 
 Tracks and stores performance metrics including response times, token usage,

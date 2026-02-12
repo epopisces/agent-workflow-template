@@ -1,4 +1,3 @@
-# Copyright (c) 2024. All rights reserved.
 """Organizational Context Agent Tool.
 
 This agent retrieves organizational context from knowledge stores:
