@@ -15,7 +15,7 @@ models:
     #   - llama3.1:8b (good tool calling, needs ~6GB RAM)
     #   - llama3.2:3b (lightweight, good balance, needs ~2GB RAM)
     #   - qwen3:4b (excellent tool calling, needs ~4GB RAM)
-    model_id: "llama3.1:8b"
+    model_id: "qwen3:4b"
 
 agents:
   coordinator:

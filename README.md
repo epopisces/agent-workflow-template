@@ -147,6 +147,13 @@ You: Is there anything useful at https://kubernetes.io/docs/concepts/overview/ f
 # Changelog
 ---
 
+### 2026-02-13 (Claude Opus 4.6 w/AIAgentExpert)
+- **Optimized**: Condensed all agent instruction prompts for faster inference with smaller models
+  - Coordinator: ~75% token reduction — removed redundant emphasis, consolidated routing into a table
+  - Org Context: ~65% reduction — merged duplicate strategy/behavior sections
+  - Knowledge Ingestion: ~55% reduction — replaced verbose guidelines with routing table
+  - URL Scraper: ~70% reduction — stripped to essentials
+
 ### 2026-02-12 (Claude Opus 4.6)
 - **Changed**: Reorganized knowledge folder structure for unified knowledge management
   - Moved `notes/` under `knowledge/notes/` — all knowledge under one tree
